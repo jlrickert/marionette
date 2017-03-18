@@ -4,7 +4,3 @@
   roles:
     - common
     - docker
-  vars_prompt:
-    name: user_pawword
-    prompt: "Enter user password"
-    private: yes

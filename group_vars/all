@@ -1,43 +1,25 @@
-user:
-  name: raviko
-  uid: 1000
-  group: raviko
-  shell: /usr/bin/zsh
-  email: jaredrickert52@gmail.com
-  build: build
-
 dotfiles:
   url: https://github.com/jlrickert/dotfiles.git
 
 aur_packages:
-  - jdk
-  - gitflow-avh
+  - gitflow-avh-git
 
 base_packages:
   - adobe-source-code-pro-fonts
-  - alsa-utils
   - ansible
-  - autoconf
-  - automake
   - bash
   - bash-completion
-  - bison
+  - bash-completion
   - cloc
   - cmake
   - ctags
   - docker
   - docker-compose
   - docker-machine
-  - efibootmgr
-  - emacs
-  - fabric
-  - fakeroot
   - fasd
-  - firejail
   - git
   - htop
   - iputils
-  - ipython
   - lm_sensors
   - lshw
   - nmap
@@ -57,7 +39,6 @@ base_packages:
   - usbutils
   - vagrant
   - vim
-  - virtualbox
   - wget
+  - zsh
   - zsh-completions
-  - zsh-syntax-highlighting

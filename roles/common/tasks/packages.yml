@@ -1,0 +1,70 @@
+---
+- name: Install universal base packages
+  pacman:
+    name={{ item }}
+    state=present
+  with_items: "{{ base_packages }}"
+  tags:
+    - packages
+
+- name: Create pacman hook directory
+  file:
+    path=/etc/pacman.d/hooks
+    state=directory
+  tags:
+    - packages
+
+- name: Push pacman mirror list update hook
+  copy:
+    src=mirrorupgrade.hook
+    dest=/etc/pacman.d/hooks/mirrorupgrade.hook
+  tags:
+    - packages
+
+- name: Create a build directory
+  file:
+    path=/home/{{ ansible_user }}/build
+    state=directory
+    owner={{ ansible_user }}
+  tags:
+    - user
+    - aur
+    - packages
+
+- name: Install yaourt dependency yajl
+  pacman:
+    name=yajl
+    state=present
+  tags:
+    - packages
+
+- name: Install yaourt dependency package-query
+  aur:
+    name=package-query
+    user={{ ansible_user }}
+    dir=/tmp
+  tags:
+    - user
+    - aur
+    - packages
+
+- name: Install yaourt
+  aur:
+    name=yaourt
+    user={{ ansible_user }}
+    dir=/tmp
+  tags:
+    - user
+    - aur
+    - packages
+
+- name: Install base AUR packages
+  aur:
+    name={{ item }}
+    user={{ ansible_user }}
+    dir=/tmp
+  with_items: "{{ aur_packages }}"
+  tags:
+    - user
+    - aur
+    - packages

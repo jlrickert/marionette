@@ -9,7 +9,7 @@ ansible vagrant \
         -m raw \
         --sudo \
         --private-key=.vagrant/machines/default/virtualbox/private_key \
-        -a 'pacman -Sy --noconfirm python2'
+        -a 'pacman -Sy --needed --noconfirm ansible && sudo usermod -aG wheel vagrant'
 ansible-playbook \
     site.yml \
     -i dev-inventory.ini \
@@ -36,7 +36,3 @@ if /usr/bin/curl --silent --fail --output mirrorlist "${URL}"; then
             -a 'src=mirrorlist dest=/etc/pacman.d/mirrorlist owner=root group=root mode=0644 backup=yes'
     rm mirrorlist
 fi
-
-echo "export ANSIBLE_HOSTS=${PWD}/hosts"
-echo 'export ANSIBLE_HOST_KEY_CHECKING=False'
-echo
