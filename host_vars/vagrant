@@ -1,0 +1,11 @@
+---
+user:
+    name: vagrant
+    uid: 1000
+    group: vagrant
+    shell: /usr/bin/zsh
+    email: jaredrickert52@gmail.com
+    build: build
+    log_dir: log
+
+user_password: vagrant
