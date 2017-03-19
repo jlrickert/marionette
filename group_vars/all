@@ -1,5 +1,6 @@
 device_hostname: hyperion
 
+
 nginx:
   log: /var/log/nginx
   access_log: /var/log/nginx/access.log
@@ -7,6 +8,9 @@ nginx:
 
 dotfiles:
   url: https://github.com/jlrickert/dotfiles.git
+
+jlrickert_me:
+  url: https://github.com/jlrickert/jlrickert.me.git
 
 aur_packages:
   - gitflow-avh-git

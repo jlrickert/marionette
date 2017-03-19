@@ -90,3 +90,6 @@ ENV/
 
 # vagrant things
 .vagrant/
+
+# ignore retry stuff
+*.retry

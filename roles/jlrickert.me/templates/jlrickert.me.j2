@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name jlrickert.me;
+    keepalive_timeout 5;
+
+    access_log {{ nginx.log }}/jlrickert_me.access.log;
+
+    root /srv/http/jlrickert_me;
+    index index.html;
+
+    location / {
+    }
+
+    location /mirror {
+        alias /srv/data/jlrickert_me;
+        autoindex on;
+        autoindex_exact_size off;
+        autoindex_localtime on;
+    }
+}
