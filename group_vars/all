@@ -1,5 +1,10 @@
 device_hostname: hyperion
 
+nginx:
+  log: /var/log/nginx
+  access_log: /var/log/nginx/access.log
+  cache: /tmp/cache/nginx
+
 dotfiles:
   url: https://github.com/jlrickert/dotfiles.git
 

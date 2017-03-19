@@ -3,5 +3,6 @@
   become: yes
   roles:
     - common
-    - docker
+    - nginx
     - postgresql
+    - docker

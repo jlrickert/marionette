@@ -7,5 +7,5 @@ vagrant:
 
 .PHONY: provision
 provision:
-	@echo "Provision vagrant box with ansible"
+	@echo "Provisioning vagrant box with ansible"
 	@./bin/provision-vagrant.sh
