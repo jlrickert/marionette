@@ -91,6 +91,6 @@
 
 - name: Enable and start nginx
   service:
-    name: postgresql.service
+    name: nginx.service
     enabled: yes
     state: started

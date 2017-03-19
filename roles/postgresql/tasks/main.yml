@@ -1,13 +1,13 @@
 ---
 - name: Install PostgreSQL
   pacman:
-    name=postgresql
-    state=present
+    name: postgresql
+    state: present
 
 - name: Install psycopg2
   pacman:
-    name=python2-psycopg2
-    state=present
+    name: python2-psycopg2
+    state: present
 
 - name: Initialize database cluster
   command:
@@ -18,29 +18,29 @@
 
 - name: Disable synchronous commits
   lineinfile:
-    dest=/var/lib/postgres/data/postgresql.conf
-    regexp=^synchronous_commit
-    state=present
-    line="synchronous_commit = off"
+    dest: /var/lib/postgres/data/postgresql.conf
+    regexp: ^synchronous_commit
+    state: present
+    line: "synchronous_commit = off"
   notify:
     - restart postgresql
 
 - name: Prevent disk writes when idle
   lineinfile:
-    dest=/var/lib/postgres/data/postgresql.conf
-    regexp=^stats_temp_directory
-    state=present
-    line="stats_temp_directory = '/run/postgresql'"
+    dest: /var/lib/postgres/data/postgresql.conf
+    regexp: ^stats_temp_directory
+    state: present
+    line: "stats_temp_directory = '/run/postgresql'"
   notify:
     - restart postgresql
 
 - name: Enable and start PostgreSQL
   service:
-    name=postgresql.service
-    enabled=yes
-    state=started
+    name: postgresql.service
+    enabled: yes
+    state: started
 
 - name: Create the PostgreSQL user
   postgresql_user:
-    name={{ ansible_user }}
-    role_attr_flags=CREATEDB,NOSUPERUSER
+    name: "{{ ansible_user }}"
+    role_attr_flags: CREATEDB,NOSUPERUSER

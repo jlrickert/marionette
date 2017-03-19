@@ -1,7 +1,7 @@
 ---
 - name: Install universal base packages
   pacman:
-    name={{ item }}
+    name="{{ item }}"
     state=present
   with_items: "{{ base_packages }}"
   tags:
@@ -23,9 +23,9 @@
 
 - name: Create a build directory
   file:
-    path=/home/{{ ansible_user }}/build
+    path="/home/{{ ansible_user }}/build"
     state=directory
-    owner={{ ansible_user }}
+    owner="{{ ansible_user }}"
   tags:
     - user
     - aur
@@ -41,7 +41,7 @@
 - name: Install yaourt dependency package-query
   aur:
     name=package-query
-    user={{ ansible_user }}
+    user="{{ ansible_user }}"
     dir=/tmp
   tags:
     - user
@@ -51,7 +51,7 @@
 - name: Install yaourt
   aur:
     name=yaourt
-    user={{ ansible_user }}
+    user="{{ ansible_user }}"
     dir=/tmp
   tags:
     - user
@@ -60,8 +60,8 @@
 
 - name: Install base AUR packages
   aur:
-    name={{ item }}
-    user={{ ansible_user }}
+    name="{{ item }}"
+    user="{{ ansible_user }}"
     dir=/tmp
   with_items: "{{ aur_packages }}"
   tags:

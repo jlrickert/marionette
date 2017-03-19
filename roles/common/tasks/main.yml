@@ -1,7 +1,6 @@
 ---
 - name: Set the hostname
   hostname: name={{ device_hostname }}
-  when: device_hostname is defined
 
 - include: packages.yml
 - include: auth.yml

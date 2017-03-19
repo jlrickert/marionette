@@ -1,8 +1,8 @@
 ---
 - name: Install apache-tools dependencies
   pacman:
-    name={{ item }}
-    state=present
+    name: "{{ item }}"
+    state: present
   with_items:
     - pcre
     - apr-util
@@ -12,23 +12,23 @@
 
 - name: Install apache-tools for htpasswd
   aur:
-    name=apache-tools
-    user={{ ansible_user }}
-    dir=/tmp
+    name: apache-tools
+    user: "{{ ansible_user }}"
+    dir: /tmp
   tags:
     - aur
     - auth
 
 - name: Create auth folder
   file:
-    path=/etc/auth
-    state=directory
+    path: /etc/auth
+    state: directory
   tags:
     - auth
 
 - name: Create htpasswd file
   file:
-    path=/etc/auth/htpasswd
-    state=touch
+    path: /etc/auth/htpasswd
+    state: touch
   tags:
     - auth
