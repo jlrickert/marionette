@@ -1,0 +1,96 @@
+---
+- name: Install nginx
+  pacman:
+    name: nginx-mainline
+    state: present
+
+- name: Create nginx user
+  user:
+    name: nginx
+    group: http
+    shell: /usr/bin/nologin
+
+- name: Add user to http group
+  user:
+    name: "{{ ansible_user }}"
+    group: http
+    append: yes
+
+- name: Create /srv/http directory
+  file:
+    path: /srv/http
+    state: directory
+    owner: root
+    group: http
+    mode: "0755"
+
+- name: Create nginx cache directory
+  file:
+    path: "{{ nginx.cache }}"
+    state: directory
+    owner: nginx
+    group: http
+
+- name: Create nginx log directory
+  file:
+    path: "{{ nginx.log }}"
+    owner: nginx
+    group: http
+    recurse: yes
+    state: directory
+
+- name: Creates sites-available directory
+  file:
+    path: /etc/nginx/sites-available
+    state: directory
+    owner: root
+    group: root
+
+- name: Creates sites-enabled directory
+  file:
+    path: /etc/nginx/sites-enabled
+    state: directory
+    owner: root
+    group: root
+
+- name: Creates default.d directory
+  file:
+    path: /etc/nginx/default.d
+    state: directory
+    owner: root
+    group: root
+
+- name: Push nginx config
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    backup: yes
+  notify:
+    - restart nginx
+
+- name: Push default config
+  template:
+    src: default.conf.j2
+    dest: /etc/nginx/default.d/default.conf
+  notify:
+    - restart nginx
+
+- name: Push default ssl config
+  template:
+    src: ssl.conf.j2
+    dest: /etc/nginx/default.d/ssl.conf
+  notify:
+    - restart nginx
+
+- name: Push default error pages config
+  template:
+    src: error_pages.j2
+    dest: /etc/nginx/default.d/error_pages
+  notify:
+    - restart nginx
+
+- name: Enable and start nginx
+  service:
+    name: nginx.service
+    enabled: yes
+    state: started

@@ -1,0 +1,23 @@
+---
+- name: Install docker
+  pacman:
+    name=docker
+    state=present
+  tags:
+    - docker
+
+- name: Enable and start Docker
+  service:
+    name=docker.service
+    enabled=yes
+    state=started
+  tags:
+    - docker
+
+- name: Add user to docker group
+  user:
+    name={{ ansible_user }}
+    groups=docker
+    append=yes
+  tags:
+    - docker

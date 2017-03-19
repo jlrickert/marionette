@@ -87,3 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# vagrant things
+.vagrant/
+
+# ignore retry stuff
+*.retry

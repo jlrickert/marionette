@@ -1,0 +1,34 @@
+---
+- name: Clone jlrickert.me
+  git:
+    repo: "{{ jlrickert_me.url }}"
+    dest: /usr/local/share/jlrickert_me
+    update: yes
+  become: yes
+
+- name: Symlink jlrickert.me to http directory
+  file:
+    src: /usr/local/share/jlrickert_me/static
+    dest: /srv/http/jlrickert_me
+    state: link
+
+- name: Push jlrickert.me to nginx config
+  template:
+    src: jlrickert.me.j2
+    dest: /etc/nginx/sites-available/jlrickert.me
+
+- name: Enable jlrickert.me reverse proxy
+  file:
+    src: /etc/nginx/sites-available/jlrickert.me
+    dest: /etc/nginx/sites-enabled/jlrickert.me
+    state: link
+  notify:
+    - restart nginx
+
+- name: Ensure jlrickert.me public mirror exists
+  file:
+    path: /srv/data/jlrickert_me
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: http
+    mode: "0755"
