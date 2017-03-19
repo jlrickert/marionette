@@ -1,3 +1,5 @@
+device_hostname: hyperion
+
 dotfiles:
   url: https://github.com/jlrickert/dotfiles.git
 
