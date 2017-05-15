@@ -1,6 +1,0 @@
-- name: Create base data directory
-  file:
-    path: /srv/data
-    state: directory
-    owner: root
-    group: root

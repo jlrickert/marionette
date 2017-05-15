@@ -1,16 +1,9 @@
-device_hostname: hyperion
-
-
 nginx:
   log: /var/log/nginx
-  access_log: /var/log/nginx/access.log
   cache: /tmp/cache/nginx
 
 dotfiles:
   url: https://github.com/jlrickert/dotfiles.git
-
-jlrickert_me:
-  url: https://github.com/jlrickert/jlrickert.me.git
 
 aur_packages:
   - gitflow-avh-git
@@ -18,8 +11,8 @@ aur_packages:
 base_packages:
   - adobe-source-code-pro-fonts
   - ansible
+  - autossh
   - bash
-  - bash-completion
   - bash-completion
   - cloc
   - cmake
@@ -31,6 +24,7 @@ base_packages:
   - git
   - htop
   - iputils
+  - keychain
   - lm_sensors
   - lshw
   - nmap
@@ -41,15 +35,18 @@ base_packages:
   - python-virtualenv
   - python2-pip
   - python2-virtualenv
+  - rsync
   - ruby-bundler
+  - sshfs
   - termite-terminfo
   - the_silver_searcher
   - tmux
   - tree
   - ufw
   - usbutils
-  - vagrant
+  - vagrant # contains htpasswd
   - vim
+  - virtualbox
   - wget
   - zsh
   - zsh-completions

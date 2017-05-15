@@ -1,0 +1,40 @@
+---
+- name: Install OpenSSH
+  pacman:
+    name: openssh
+    state: present
+
+- name: Push OpenSSH daemon config
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    backup: yes
+  notify:
+    - restart sshd
+
+- name: Enable and Start SSH
+  service:
+    name: sshd.socket
+    enabled: yes
+    state: started
+
+- name: Make directory for user SSH key
+  file:
+    path: "/home/{{ ansible_user }}/.ssh"
+    state: directory
+    mode: 700
+    owner: "{{ ansible_user }}"
+    group: users
+
+- name: Install user SSH private key
+  copy:
+    src: "/home/{{ lookup('env', 'USER') }}/.ssh/id_rsa_{{ lookup('env', 'USER') }}"
+    dest: "/home/{{ ansible_user }}/.ssh/id_rsa_{{ ansible_user }}"
+    mode: 600
+    owner: "{{ ansible_user }}"
+    group: users
+
+- name: Install SSH public key
+  authorized_key:
+    user: "{{ ansible_user }}"
+    key: "https://github.com/jlrickert.keys"
