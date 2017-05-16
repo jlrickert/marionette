@@ -12,25 +12,33 @@
   notify:
     - restart sshd
 
-- name: Enable and Start SSH
+- name: Enable and start SSH
   service:
     name: sshd.socket
     enabled: yes
     state: started
 
-- name: Make directory for user SSH key
+- name: Make SSH directory for user
   file:
     path: "/home/{{ ansible_user }}/.ssh"
     state: directory
-    mode: 700
+    mode: 0700
     owner: "{{ ansible_user }}"
     group: users
 
 - name: Install user SSH private key
   copy:
-    src: "/home/{{ lookup('env', 'USER') }}/.ssh/id_rsa_{{ lookup('env', 'USER') }}"
+    src: "/home/{{ lookup('env', 'USER') }}/.ssh/id_rsa_{{ ansible_user }}"
     dest: "/home/{{ ansible_user }}/.ssh/id_rsa_{{ ansible_user }}"
-    mode: 600
+    mode: 0600
+    owner: "{{ ansible_user }}"
+    group: users
+
+- name: Install user SSH public key
+  copy:
+    src: "/home/{{ lookup('env', 'USER') }}/.ssh/id_rsa_{{ ansible_user }}.pub"
+    dest: "/home/{{ ansible_user }}/.ssh/id_rsa_{{ ansible_user }}.pub"
+    mode: 0600
     owner: "{{ ansible_user }}"
     group: users
 
@@ -38,3 +46,10 @@
   authorized_key:
     user: "{{ ansible_user }}"
     key: "https://github.com/jlrickert.keys"
+
+- name: Copy SSH user configuration
+  copy:
+    src: "/home/{{ lookup('env', 'USER') }}/.ssh/config"
+    dest: "/home/{{ ansible_user }}/.ssh/config"
+    owner: "{{ ansible_user }}"
+    group: users

@@ -8,11 +8,11 @@ AuthorizedKeysFile  .ssh/authorized_keys
 PasswordAuthentication no
 LoginGraceTime 1m
 ChallengeResponseAuthentication no
-UsePAM no
+UsePAM yes
 PrintMotd no
 PrintLastLog yes
 AllowUsers {{ ansible_user }}
-Subsystem   sftp    /usr/lib/ssh/sftp-server
+Subsystem sftp /usr/lib/ssh/sftp-server
 X11Forwarding no
 
 # Preferred algorithms from:

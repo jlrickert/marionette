@@ -1,6 +1,5 @@
 nginx:
   log: /var/log/nginx
-  cache: /tmp/cache/nginx
 
 dotfiles:
   url: https://github.com/jlrickert/dotfiles.git
@@ -22,6 +21,7 @@ base_packages:
   - docker-machine
   - fasd
   - git
+  - gvim
   - htop
   - iputils
   - keychain
@@ -45,7 +45,6 @@ base_packages:
   - ufw
   - usbutils
   - vagrant # contains htpasswd
-  - vim
   - virtualbox
   - wget
   - zsh
