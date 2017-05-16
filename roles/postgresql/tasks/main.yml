@@ -4,6 +4,7 @@
     name: postgresql
     state: present
 
+# needed by ansible to create databases
 - name: Install psycopg2
   pacman:
     name: python2-psycopg2
@@ -44,3 +45,10 @@
   postgresql_user:
     name: "{{ ansible_user }}"
     role_attr_flags: CREATEDB,NOSUPERUSER
+
+- name: Create a default DB for user
+  postgresql_db:
+    name: "{{ ansible_user }}"
+    login_user: "{{ ansible_user }}"
+    owner: "{{ ansible_user }}"
+    state: present
