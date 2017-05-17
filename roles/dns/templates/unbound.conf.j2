@@ -1,0 +1,40 @@
+# {{ ansible_managed }}
+
+server:
+  use-syslog: yes
+  username: "unbound"
+  directory: "/etc/unbound"
+  interface: 0.0.0.0
+  access-control: 192.168.0.0/24 allow
+  auto-trust-anchor-file: trusted-key.key
+
+  private-address: 192.168.0.0/24
+  private-address: fd00::/8
+  private-address: fe80::/10
+
+  root-hints: /etc/unbound/root.hints
+
+  include: /etc/unbound/local.d/adservers
+
+  local-zone: "jlrickert.me" nodefault
+  local-zone: "0.168.192.in-addr.arpa." nodefault
+
+  stub-zone:
+    name: "jlrickert.me"
+    stub-addr: 127.0.0.1@53530
+
+  stub-zone:
+    name: "home.net"
+    stub-addr: 127.0.0.1@53530
+
+  stub-zone:
+    name: "0.168.192.in-addr.arpa."
+    stub-addr: 127.0.0.1@53530
+
+{% if nameservers %}
+  forward-zone:
+    name: "."
+    {% for nameserver in nameservers %}
+    forward-addr: {{ nameserver }}
+    {% endfor %}
+{% endif %}

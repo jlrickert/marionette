@@ -1,0 +1,61 @@
+---
+- name: Install nsd
+  pacman:
+    name: nsd
+    state: present
+  tags:
+    - dns
+
+- name: Create zones directory
+  file:
+    path: /etc/nsd/zones
+    state: directory
+    owner: root
+    group: root
+  tags:
+    - dns
+
+- name: Push nsd config
+  template:
+    src: nsd.conf.j2
+    dest: /etc/nsd/nsd.conf
+    backup: yes
+  notify:
+    - restart nsd
+  tags:
+    - dns
+
+- name: Push localnetwork reverse dns zone
+  copy:
+    src: 192.168.0.zone
+    dest: /etc/nsd/zones/192.168.0.zone
+  notify:
+    - restart nsd
+  tags:
+    - dns
+
+- name: Push localnetwork dns zone
+  copy:
+    src: home.net.zone
+    dest: /etc/nsd/zones/home.net.zone
+  notify:
+    - restart nsd
+  tags:
+    - dns
+
+- name: Push jlrickert.me dns zone
+  copy:
+    src: jlrickert.me.zone
+    dest: /etc/nsd/zones/jlrickert.me.zone
+  notify:
+    - restart nsd
+  tags:
+    - dns
+
+- name: Enable and start nsd
+  service:
+    name: nsd.service
+    enabled: yes
+    state: started
+  tags:
+    - dns

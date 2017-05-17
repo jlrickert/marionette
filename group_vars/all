@@ -7,6 +7,11 @@ dotfiles:
 aur_packages:
   - gitflow-avh-git
 
+nameservers:
+  - 8.8.8.8 # google 1
+  - 8.8.4.4 # google 2
+  - 24.196.64.53 # charter
+
 base_packages:
   - adobe-source-code-pro-fonts
   - ansible

@@ -1,9 +1,10 @@
 ---
-- hosts: all
+- hosts: main-server
   become: yes
   roles:
     - common
+    - systemd
     - postgresql
-    # - nginx
+    - nginx
+    - dns
     # - docker
-    # - dns
