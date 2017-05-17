@@ -20,5 +20,6 @@
     dest: /etc/sudoers
     mode: 440
     validate: 'visudo -cf %s'
+  become: true
   tags:
     - sudo

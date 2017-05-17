@@ -33,6 +33,7 @@
     mode: 0600
     owner: "{{ ansible_user }}"
     group: users
+  ignore_errors: yes
 
 - name: Install user SSH public key
   copy:
@@ -41,6 +42,7 @@
     mode: 0600
     owner: "{{ ansible_user }}"
     group: users
+  ignore_errors: yes
 
 - name: Install SSH public key
   authorized_key:
@@ -53,3 +55,4 @@
     dest: "/home/{{ ansible_user }}/.ssh/config"
     owner: "{{ ansible_user }}"
     group: users
+  ignore_errors: yes
