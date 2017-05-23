@@ -1,10 +1,5 @@
 ---
-- hosts: main-server
-  become: yes
-  roles:
-    - common
-    - systemd
-    - postgresql
-    - nginx
-    - dns
-    # - docker
+- hosts: all
+  include:
+    - site
+    - workstation

@@ -21,12 +21,9 @@ base_packages:
   - cloc
   - cmake
   - ctags
-  - docker
-  - docker-compose
-  - docker-machine
   - fasd
   - git
-  - gvim
+  - vim
   - htop
   - iputils
   - keychain
@@ -50,7 +47,6 @@ base_packages:
   - ufw
   - usbutils
   - vagrant # contains htpasswd
-  - virtualbox
   - wget
   - zsh
   - zsh-completions

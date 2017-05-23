@@ -11,6 +11,3 @@
 
 - name: restart resolveconf
   shell: resolvconf -u
-
-- name: reload systemd config
-  command: systemctl daemon-reload

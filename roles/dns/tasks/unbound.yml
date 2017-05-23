@@ -6,6 +6,25 @@
   tags:
     - dns
 
+- name: Correct permissions for trusted-key.key
+  file:
+    path: /etc/unbound/trusted-key.key
+    state: touch
+    owner: unbound
+    group: unbound
+  tags:
+    - dns
+
+- name: Correct permissions unbound directory
+  file:
+    path: /etc/unbound
+    state: directory
+    owner: root
+    group: unbound
+    mode: 0775
+  tags:
+    - dns
+
 - name: Create local.d directory
   file:
     path: /etc/unbound/local.d
@@ -96,7 +115,7 @@
 
 - name: Enable roothints timer
   service:
-    name: roothints.service
+    name: roothints.timer
     enabled: yes
     state: started
   tags:
