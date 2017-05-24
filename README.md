@@ -1,12 +1,13 @@
 # marionette
-Project to provision my own internal cloud
+
+Project to provision my own internal network
 
 # Production stuff
 
 example command to provision my server
 
 ```bash
-ansible-playbook -i inventory.ini site.yml --private-key=~/.ssh/id_rsa
+ansible-playbook -i inventory/production.ini $playbook --private-key ~/.ssh/id_rsa
 ```
 
 # Quick setup for a vagrant box
