@@ -1,9 +1,6 @@
 nginx:
   log: /var/log/nginx
 
-dotfiles:
-  url: https://github.com/jlrickert/dotfiles.git
-
 aur_packages:
   - gitflow-avh-git
 

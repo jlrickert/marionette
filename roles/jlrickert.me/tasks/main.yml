@@ -1,21 +1,37 @@
 ---
-- name: Clone jlrickert.me
-  git:
-    repo: "{{ jlrickert_me.url }}"
-    dest: /usr/local/share/jlrickert_me
-    update: yes
-  become: yes
+# - name: Clone jlrickert.me
+#   git:
+#     repo: "https://github.com/jlrickert/jlrickert.me.git"
+#     dest: /usr/local/share/jlrickert.me
+#     update: yes
+#   become: yes
+#   notify:
+#     - restart nginx
+# tags:
+#   - jlrickert.me
 
-- name: Symlink jlrickert.me to http directory
+- name: Create jlrickert.me deploy directory
   file:
-    src: /usr/local/share/jlrickert_me/static
-    dest: /srv/http/jlrickert_me
-    state: link
+    path: /usr/local/share/jlrickert.me
+    state: directory
+  tags:
+    - jlrickert.me
+
+- name: Create jlrickert.me log directory
+  file:
+    path: "{{ nginx.log }}/jlrickert.me"
+    state: directory
+  tags:
+    - jlrickert.me
 
 - name: Push jlrickert.me to nginx config
   template:
     src: jlrickert.me.j2
     dest: /etc/nginx/sites-available/jlrickert.me
+  notify:
+    - restart nginx
+  tags:
+    - jlrickert.me
 
 - name: Enable jlrickert.me reverse proxy
   file:
@@ -24,11 +40,5 @@
     state: link
   notify:
     - restart nginx
-
-- name: Ensure jlrickert.me public mirror exists
-  file:
-    path: /srv/data/jlrickert_me
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: http
-    mode: "0755"
+  tags:
+    - jlrickert.me

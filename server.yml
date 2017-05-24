@@ -6,5 +6,6 @@
     - systemd
     - postgresql
     - nginx
+    - jlrickert.me
     - dns
     # - docker
