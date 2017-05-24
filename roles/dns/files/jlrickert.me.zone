@@ -1,0 +1,17 @@
+$TTL 60
+$ORIGIN jlrickert.me.
+@           IN      SOA     ns.jlrickert.me. admin.jlrickert.me. (
+                            2          ; Serial
+                            28800      ; Refresh after 6 hours
+                            1800       ; Retry after 1 hour
+                            604800     ; Expire after 1 week
+                            60 )       ; Minimum TTL of 1 day
+
+            IN      NS      ns.jlrickert.me.
+            IN      A       47.32.22.65
+*           IN      A       47.32.22.65
+admin       IN      A       47.32.22.65
+www         IN      A       47.32.22.65
+private     IN      A       47.32.22.65
+blog        IN      A       47.32.22.65
+ns          IN      A       47.32.22.65

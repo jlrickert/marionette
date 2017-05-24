@@ -1,0 +1,149 @@
+---
+- name: Install unbound
+  pacman:
+    name: unbound
+    state: present
+  tags:
+    - dns
+
+- name: Correct permissions for trusted-key.key
+  file:
+    path: /etc/unbound/trusted-key.key
+    state: touch
+    owner: unbound
+    group: unbound
+  tags:
+    - dns
+
+- name: Correct permissions unbound directory
+  file:
+    path: /etc/unbound
+    state: directory
+    owner: root
+    group: unbound
+    mode: 0775
+  tags:
+    - dns
+
+- name: Create local.d directory
+  file:
+    path: /etc/unbound/local.d
+    state: directory
+    owner: root
+    group: root
+  tags:
+    - dns
+
+- name: Push unbound config
+  template:
+    src: unbound.conf.j2
+    dest: /etc/unbound/unbound.conf
+    backup: yes
+  notify:
+    - restart unbound
+  tags:
+    - dns
+
+- name: Push unbound adblock
+  copy:
+    src: adblock
+    dest: /etc/unbound/local.d/adblock
+  notify:
+    - restart unbound
+  tags:
+    - dns
+
+- name: Set unbound to local DNS
+  lineinfile:
+    dest: /etc/resolvconf.conf
+    regexp: ^name_server=127.0.0.1
+    state: present
+    line: "name_server=127.0.0.1"
+  notify:
+    - restart resolveconf
+  tags:
+    - dns
+
+- name: Push roothints service
+  copy:
+    src: roothints.service
+    dest: /etc/systemd/system/roothints.service
+  notify:
+    - reload systemd config
+    - restart unbound
+  tags:
+    - dns
+
+- name: Push roothints timer
+  copy:
+    src: roothints.timer
+    dest: /etc/systemd/system/roothints.timer
+  notify:
+    - reload systemd config
+    - restart unbound
+  tags:
+    - dns
+
+- name: Push adservers service
+  copy:
+    src: adservers.service
+    dest: /etc/systemd/system/adservers.service
+  notify:
+    - reload systemd config
+    - restart unbound
+  tags:
+    - dns
+
+- name: Push adservers timer
+  copy:
+    src: adservers.timer
+    dest: /etc/systemd/system/adservers.timer
+  notify:
+    - reload systemd config
+    - restart unbound
+  tags:
+    - dns
+
+- name: Ensure adservers file exists
+  command:
+    systemctl start adservers.service
+    creates=/etc/unbound/local.d/adservers
+  tags:
+    - dns
+  notify:
+    - restart unbound
+
+- name: Ensure roothints file exists
+  command:
+    systemctl start roothints.service
+    creates=/etc/unbound/local.d/adservers
+  tags:
+    - dns
+  notify:
+    - restart unbound
+
+- name: Enable roothints timer
+  service:
+    name: roothints.timer
+    enabled: yes
+    state: started
+  tags:
+    - dns
+
+- name: Enable adservers timer
+  service:
+    name: adservers.timer
+    enabled: yes
+    state: started
+  notify:
+    - reload systemd config
+  tags:
+    - dns
+
+- name: Enable and start unbound
+  service:
+    name: unbound.service
+    enabled: yes
+    state: started
+  tags:
+    - dns

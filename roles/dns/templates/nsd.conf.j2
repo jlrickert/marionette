@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+server:
+    server-count: 1
+    ip-address: 127.0.0.1
+    port: 53530
+    do-ip4: yes
+    hide-version: yes
+    identity: "Home network authoritative DNS"
+    zonesdir: "//etc/nsd/zones"
+zone:
+    name: "home.net"
+    zonefile: "home.net.zone"
+zone:
+    name: "0.168.192.in-addr.arpa"
+    zonefile: "192.168.0.zone"

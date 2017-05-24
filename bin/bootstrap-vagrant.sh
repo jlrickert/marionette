@@ -41,10 +41,10 @@ if /usr/bin/curl --silent --fail --output "${MIRRORLIST}" "${MIRROR_URL}"; then
     rm $MIRRORLIST
 fi
 
-echo "Ensure that ansible is present"
+echo "Ensure that ansible and python2 is present"
 ansible vagrant \
         -i $INVENTORY \
         -m raw \
         --sudo \
         --private-key=$PRIVATE_KEY \
-        -a 'pacman -Sy --needed --noconfirm ansible'
+        -a 'pacman -Sy --needed --noconfirm ansible python2'

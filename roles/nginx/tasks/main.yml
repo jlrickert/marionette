@@ -4,38 +4,25 @@
     name: nginx-mainline
     state: present
 
-- name: Create nginx user
+- name: Create http user
   user:
-    name: nginx
+    name: http
     group: http
     shell: /usr/bin/nologin
-
-- name: Add user to http group
-  user:
-    name: "{{ ansible_user }}"
-    group: http
-    append: yes
 
 - name: Create /srv/http directory
   file:
     path: /srv/http
     state: directory
     owner: root
-    group: http
+    group: root
     mode: "0755"
-
-- name: Create nginx cache directory
-  file:
-    path: "{{ nginx.cache }}"
-    state: directory
-    owner: nginx
-    group: http
 
 - name: Create nginx log directory
   file:
     path: "{{ nginx.log }}"
-    owner: nginx
-    group: http
+    owner: root
+    group: root
     recurse: yes
     state: directory
 

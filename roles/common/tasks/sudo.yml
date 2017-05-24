@@ -8,7 +8,7 @@
 
 - name: Add user to wheel group
   user:
-    name: "{{ user.name }}"
+    name: "{{ ansible_user }}"
     groups: wheel
     append: yes
   tags:
@@ -20,5 +20,6 @@
     dest: /etc/sudoers
     mode: 440
     validate: 'visudo -cf %s'
+  become: true
   tags:
     - sudo

@@ -1,0 +1,11 @@
+---
+- hosts: server
+  become: yes
+  roles:
+    - common
+    - systemd
+    - postgresql
+    - nginx
+    - jlrickert.me
+    - dns
+    # - docker

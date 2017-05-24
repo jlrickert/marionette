@@ -1,0 +1,7 @@
+---
+- hosts: workstation
+  become: yes
+  roles:
+    - common
+    - systemd
+    - postgresql

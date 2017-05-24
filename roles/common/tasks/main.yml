@@ -1,8 +1,4 @@
 ---
-- name: Set the hostname
-  hostname: name={{ device_hostname }}
-
 - include: packages.yml
-- include: auth.yml
-- include: dotfiles.yml
-- include: data.yml
+- include: sudo.yml
+- include: ssh.yml

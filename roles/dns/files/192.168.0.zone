@@ -1,0 +1,15 @@
+$TTL 60
+$ORIGIN 0.168.192.IN-ADDR.ARPA.
+@       IN      SOA    ns1.home.net. admin.home.net. (
+                       2     ; serial (yyyymmdd##)
+                       3H    ; refresh
+                       15M   ; retry
+                       1W    ; expiry
+                       60 )  ; minimum ttl
+1       IN      PTR     router1.home.net.
+2       IN      PTR     router2.home.net.
+10      IN      PTR     myelin.home.net.
+11      IN      PTR     cortex.home.net.
+20      IN      PTR     hyperion.home.net.
+21      IN      PTR     neuron.home.net.
+22      IN      PTR     printer.home.net.

@@ -3,11 +3,16 @@
   pacman:
     name: postgresql
     state: present
+  tags:
+    - postgresql
 
+# needed by ansible to create databases
 - name: Install psycopg2
   pacman:
     name: python2-psycopg2
     state: present
+  tags:
+    - postgresql
 
 - name: Initialize database cluster
   command:
@@ -15,6 +20,8 @@
     creates=/var/lib/postgres/data/postgresql.conf
   become: yes
   become_user: postgres
+  tags:
+    - postgresql
 
 - name: Disable synchronous commits
   lineinfile:
@@ -24,6 +31,8 @@
     line: "synchronous_commit = off"
   notify:
     - restart postgresql
+  tags:
+    - postgresql
 
 - name: Prevent disk writes when idle
   lineinfile:
@@ -33,14 +42,29 @@
     line: "stats_temp_directory = '/run/postgresql'"
   notify:
     - restart postgresql
+  tags:
+    - postgresql
 
 - name: Enable and start PostgreSQL
   service:
     name: postgresql.service
     enabled: yes
     state: started
+  tags:
+    - postgresql
 
 - name: Create the PostgreSQL user
   postgresql_user:
     name: "{{ ansible_user }}"
     role_attr_flags: CREATEDB,NOSUPERUSER
+  tags:
+    - postgresql
+
+- name: Create a default Database for user
+  postgresql_db:
+    name: "{{ ansible_user }}"
+    login_user: "{{ ansible_user }}"
+    owner: "{{ ansible_user }}"
+    state: present
+  tags:
+    - postgresql

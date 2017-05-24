@@ -1,0 +1,6 @@
+[Unit]
+Description=Update adservers for unbound
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/curl -o /etc/unbound/local.d/adservers https://pgl.yoyo.org/adservers/serverlist.php?hostformat=unbound&showintro=0&startdate%5Bday%5D=&startdate%5Bmonth%5D=&startdate%5Byear%5D=&mimetype=plaintext

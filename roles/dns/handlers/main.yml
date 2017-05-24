@@ -1,0 +1,13 @@
+---
+- name: restart unbound
+  service:
+    name: unbound.service
+    state: restarted
+
+- name: restart nsd
+  service:
+    name: nsd.service
+    state: restarted
+
+- name: restart resolveconf
+  shell: resolvconf -u
