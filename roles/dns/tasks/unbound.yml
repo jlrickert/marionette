@@ -44,6 +44,15 @@
   tags:
     - dns
 
+- name: Push unbound adblock
+  copy:
+    src: adblock
+    dest: /etc/unbound/local.d/adblock
+  notify:
+    - restart unbound
+  tags:
+    - dns
+
 - name: Set unbound to local DNS
   lineinfile:
     dest: /etc/resolvconf.conf

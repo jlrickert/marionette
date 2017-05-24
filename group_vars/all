@@ -23,7 +23,6 @@ base_packages:
   - ctags
   - fasd
   - git
-  - vim
   - htop
   - iputils
   - keychain

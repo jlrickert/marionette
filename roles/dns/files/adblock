@@ -1,0 +1,14 @@
+local-zone: "doubleclick.net" redirect
+local-data: "doubleclick.net A 127.0.0.1"
+local-zone: "googlesyndication.com" redirect
+local-data: "googlesyndication.com A 127.0.0.1"
+local-zone: "googleadservices.com" redirect
+local-data: "googleadservices.com A 127.0.0.1"
+local-zone: "google-analytics.com" redirect
+local-data: "google-analytics.com A 127.0.0.1"
+local-zone: "ads.youtube.com" redirect
+local-data: "ads.youtube.com A 127.0.0.1"
+local-zone: "adserver.yahoo.com" redirect
+local-data: "adserver.yahoo.com A 127.0.0.1"
+local-zone: "ask.com" redirect
+local-data: "ask.com A 127.0.0.1"
