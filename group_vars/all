@@ -3,6 +3,7 @@ nginx:
 
 aur_packages:
   - gitflow-avh-git
+  - wemux-git
 
 nameservers:
   - 8.8.8.8 # google 1
@@ -19,6 +20,7 @@ base_packages:
   - cmake
   - ctags
   - fasd
+  - gcc
   - git
   - htop
   - iputils

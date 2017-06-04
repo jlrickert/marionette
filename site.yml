@@ -1,5 +1,3 @@
 ---
-- hosts: all
-  include:
-    - site
-    - workstation
+- include: server.yml
+- include: workstation.yml

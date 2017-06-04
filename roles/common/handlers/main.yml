@@ -6,3 +6,6 @@
   service:
     name: sshd.socket
     state: restarted
+
+- name: reset kernel parameters
+  command: sysctl --system

@@ -1,0 +1,8 @@
+---
+- name: Increase inotify count
+  copy:
+    src: 50-inotify.conf
+    dest: /etc/sysctl.d/50-inotify.conf
+  tags:
+    - tweaks
+

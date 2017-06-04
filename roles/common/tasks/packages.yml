@@ -73,3 +73,13 @@
   tags:
     - aur
     - packages
+
+- name: Configure wemux
+  lineinfile:
+    dest: /etc/wemux/wemux.conf
+    regexp: ^host_list
+    state: present
+    line: "host_list=({{ ansible_user }})"
+  tags:
+    - aur
+    - packages

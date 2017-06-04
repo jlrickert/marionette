@@ -8,7 +8,7 @@ server {
 
     access_log {{ nginx.log }}/jlrickert.me/access.log;
 
-    root /usr/local/share/jlrickert.me;
+    root {{ jlrickert_me.directory }};
 
     location / {
         index index.html;

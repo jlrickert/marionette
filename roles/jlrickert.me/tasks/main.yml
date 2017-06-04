@@ -1,19 +1,17 @@
 ---
-# - name: Clone jlrickert.me
-#   git:
-#     repo: "https://github.com/jlrickert/jlrickert.me.git"
-#     dest: /usr/local/share/jlrickert.me
-#     update: yes
-#   become: yes
-#   notify:
-#     - restart nginx
-# tags:
-#   - jlrickert.me
-
-- name: Create jlrickert.me deploy directory
+- name: Remove old jlrickert.me
   file:
-    path: /usr/local/share/jlrickert.me
-    state: directory
+    path: "{{ jlrickert_me.directory }}"
+    state: absent
+  tags:
+    - jlrickert.me
+
+- name: Clone jlrickert.me
+  git:
+    repo: "https://github.com/jlrickert/jlrickert.github.io"
+    dest: "{{ jlrickert_me.directory }}"
+    update: yes
+  become: yes
   tags:
     - jlrickert.me
 
