@@ -1,17 +1,18 @@
-$TTL 60
+$TTL 3600
 $ORIGIN home.net.
 @           IN      SOA     ns1.home.net. admin.home.net. (
-                            2          ; Serial
+                            4          ; Serial
                             28800      ; Refresh after 6 hours
                             1800       ; Retry after 1 hour
                             604800     ; Expire after 1 week
-                            60 )       ; Minimum TTL of 1 day
+                            3600 )       ; Minimum TTL of 1 day
 
             IN      NS      ns1.home.net.
             IN      A       192.168.0.20
 admin       IN      CNAME   hyperion.home.net.
 www         IN      CNAME   hyperion.home.net.
 private     IN      CNAME   hyperion.home.net.
+notes       IN      CNAME   hyperion.home.net
 blog        IN      CNAME   hyperion.home.net.
 ns1         IN      CNAME   hyperion.home.net.
 ns2         IN      CNAME   neuron.home.net.
