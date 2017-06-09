@@ -6,3 +6,9 @@
   tags:
     - tweaks
 
+- name: Push fuse config file
+  copy:
+    src: fuse.conf
+    dest: /etc/fuse.conf
+  tags:
+    - tweaks
