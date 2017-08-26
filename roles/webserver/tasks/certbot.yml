@@ -1,0 +1,41 @@
+- name: Install certbot
+  pacman:
+    name: certbot
+    state: present
+  tags:
+    - certbot
+
+- name: Install certbot-nginx
+  pacman:
+    name: certbot-nginx
+    state: present
+  tags:
+    - certbot
+
+- name: Push certbot auto renew service
+  copy:
+    src: certbot.service
+    dest: /etc/systemd/system/certbot.service
+  notify:
+    - reload systemd config
+  tags:
+    - certbot
+
+- name: Push certbot auto renew timer
+  copy:
+    src: certbot.timer
+    dest: /etc/systemd/system/certbot.timer
+  notify:
+    - reload systemd config
+  tags:
+    - certbot
+
+- name: Enable certbot auto renew timer
+  service:
+    name: certbot.timer
+    enabled: yes
+    state: started
+  notify:
+    - reload systemd config
+  tags:
+    - certbot

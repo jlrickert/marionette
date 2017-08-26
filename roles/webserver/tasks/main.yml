@@ -1,0 +1,4 @@
+---
+- include: nginx.yml
+- include: certbot.yml
+- include: restart-nginx.yml

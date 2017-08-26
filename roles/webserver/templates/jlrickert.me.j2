@@ -1,0 +1,27 @@
+# {{ ansible_managed }}
+
+server {
+  listen 80;
+  listen [::]:80;
+  listen 443 ssl;
+  listen [::]:443 ssl;
+
+  server_name jlrickert.me;
+
+  keepalive_timeout 5;
+
+  access_log /var/log/nginx/jlrickert.me/access.log;
+
+  root /srv/http/jlrickert.me;
+
+  location / {
+    index index.html;
+    error_page 404 = /404.html;
+  }
+
+  # ACME challenge
+  location ^~ /.well-known/acme-challenge/ {
+    default_type "text/plain";
+    root /var/lib/letsencrypt;
+  }
+}
