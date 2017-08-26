@@ -9,3 +9,8 @@
 
 - name: reset kernel parameters
   command: sysctl --system
+
+- name: restart docker
+  service:
+    name: nginx.service
+    state: restarted
