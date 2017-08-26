@@ -1,0 +1,40 @@
+# {{ ansible_managed }}
+
+server {
+  listen  192.0.0.1:80;
+
+  # Redirect all non-HTTPS traffic to the HTTPS variant
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen  443 ssl;
+
+	root /srv/git/;
+	index index.html;
+
+	server_name {{ "git.{}".format(domain) }};
+	access_log /var/log/nginx/access.log;
+
+	#error_page 404 /404.html;
+
+  # ... ssl params ...
+
+	auth_basic            "Restricted";
+	auth_basic_user_file  /etc/nginx/htpasswd;
+
+  location ~ /git(/.*) {
+    # Set chunks to unlimited, as the body's can be huge
+		client_max_body_size			0;
+
+		fastcgi_param	SCRIPT_FILENAME		/usr/lib/git-core/git-http-backend;
+		include		fastcgi_params;
+		fastcgi_param	GIT_HTTP_EXPORT_ALL	"";
+		fastcgi_param	GIT_PROJECT_ROOT	/git;
+		fastcgi_param	PATH_INFO		$1;
+
+		# Forward REMOTE_USER as we want to know when we are authenticated
+		fastcgi_param	REMOTE_USER		$remote_user;
+		fastcgi_pass	unix:/var/run/fcgiwrap.socket;
+	}
+}

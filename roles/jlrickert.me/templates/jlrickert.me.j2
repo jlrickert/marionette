@@ -6,6 +6,9 @@ server {
     server_name jlrickert.me;
     keepalive_timeout 5;
 
+    ssl_certificate ssl/notes.crt;
+    ssl_certificate_key ssl/notes.key;
+
     access_log {{ nginx.log }}/jlrickert.me/access.log;
 
     root {{ jlrickert_me.directory }};

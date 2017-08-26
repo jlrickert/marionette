@@ -1,0 +1,16 @@
+[Unit]
+Description=Automatic compilation of notes
+After=syslog.target
+
+[Service]
+Type=Simple
+User=root
+Group=root
+ExecStart=/usr/bin/pandoc-watch --input=/home/jlrickert/Sync/notes --output=/srv/http/notes
+StandardOutput=syslog
+StandardError=syslog
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

@@ -76,6 +76,12 @@
   notify:
     - restart nginx
 
+- name: Copy ssl files
+  copy:
+    src: "/home/{{ ansible_user }}/Sync/secrets/ssl"
+    dest: /etc/nginx/ssl/
+    directory_mode: yes
+
 - name: Enable and start nginx
   service:
     name: nginx.service

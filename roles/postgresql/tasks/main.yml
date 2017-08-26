@@ -56,7 +56,7 @@
 - name: Create the PostgreSQL user
   postgresql_user:
     name: "{{ ansible_user }}"
-    role_attr_flags: CREATEDB,NOSUPERUSER
+    role_attr_flags: CREATEDB,SUPERUSER
   tags:
     - postgresql
 
