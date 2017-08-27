@@ -19,24 +19,15 @@
   file:
     path: /srv/http
     state: directory
-    owner: http
+    owner: root
     group: http
     mode: "u+rw,g+rw,o+x,g+s"
 
-
-- name: Create git repository directory
-  file:
-    path: /srv/git
-    state: directory
-    group: http
-  tags:
-    - gitweb
-
 - name: Create nginx log directory
   file:
-    path: "{{ nginx.log }}"
+    path: "/var/log/nginx"
     owner: root
-    group: root
+    group: http
     recurse: yes
     state: directory
 

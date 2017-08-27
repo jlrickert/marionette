@@ -38,7 +38,6 @@
     group: users
   ignore_errors: yes
 
-
 - name: Copy SSH public key
   authorized_key:
     user: "{{ ansible_user }}"
