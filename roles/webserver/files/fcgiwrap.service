@@ -1,0 +1,13 @@
+[Unit]
+Description=Simple server for running CGI applications over FastCGI
+After=syslog.target network.target
+
+[Service]
+Type=forking
+Restart=on-abort
+PIDFile=/var/run/fcgiwrap.pid
+ExecStart=/usr/bin/spawn-fcgi -s /var/run/fcgiwrap.sock -P /var/run/fcgiwrap.pid -u http -g http -- /usr/sbin/fcgiwrap
+ExecStop=/usr/bin/kill -15 $MAINPID
+
+[Install]
+WantedBy=multi-user.target

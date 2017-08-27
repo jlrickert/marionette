@@ -21,6 +21,14 @@
     group: users
   ignore_errors: yes
 
+- name: Make user SSH private Key the default
+  file:
+    src: "/home/{{ ansible_user }}/.ssh/id_rsa_{{ ansible_user }}"
+    dest: "/home/{{ ansible_user }}/.ssh/id_rsa"
+    mode: 0600
+    state: link
+  ignore_errors: yes
+
 - name: Copy user SSH public key
   copy:
     src: "/home/{{ lookup('env', 'USER') }}/.ssh/id_rsa_{{ ansible_user }}.pub"
@@ -29,6 +37,7 @@
     owner: "{{ ansible_user }}"
     group: users
   ignore_errors: yes
+
 
 - name: Copy SSH public key
   authorized_key:

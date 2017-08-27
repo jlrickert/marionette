@@ -3,14 +3,18 @@
 server {
   listen 80;
   listen [::]:80;
-  listen 443 ssl;
-  listen [::]:443 ssl;
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
 
   server_name jlrickert.me;
 
   keepalive_timeout 5;
 
+  ssl_certificate /etc/letsencrypt/live/jlrickert.me/fullchain.pem; # managed by Certbot
+  ssl_certificate_key /etc/letsencrypt/live/jlrickert.me/privkey.pem; # managed by Certbot
+
   access_log /var/log/nginx/jlrickert.me/access.log;
+  error_log /var/log/nginx/jlrickert.me/error.log;
 
   root /srv/http/jlrickert.me;
 
@@ -19,9 +23,5 @@ server {
     error_page 404 = /404.html;
   }
 
-  # ACME challenge
-  location ^~ /.well-known/acme-challenge/ {
-    default_type "text/plain";
-    root /var/lib/letsencrypt;
-  }
+  include conf.d/letsencrypt.conf;
 }

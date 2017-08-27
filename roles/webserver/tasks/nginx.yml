@@ -1,6 +1,6 @@
 - name: Install nginx
   pacman:
-    name: nginx-mainline
+    name: nginx
     state: present
 
 - name: Create http user
@@ -19,9 +19,18 @@
   file:
     path: /srv/http
     state: directory
-    owner: root
-    group: root
-    mode: "0755"
+    owner: http
+    group: http
+    mode: "u+rw,g+rw,o+x,g+s"
+
+
+- name: Create git repository directory
+  file:
+    path: /srv/git
+    state: directory
+    group: http
+  tags:
+    - gitweb
 
 - name: Create nginx log directory
   file:
@@ -45,9 +54,9 @@
     owner: root
     group: root
 
-- name: Create default.d directory
+- name: Create conf.d directory
   file:
-    path: /etc/nginx/default.d
+    path: /etc/nginx/conf.d
     state: directory
     owner: root
     group: root
@@ -61,17 +70,17 @@
 - name: Push default config
   template:
     src: default.conf.j2
-    dest: /etc/nginx/default.d/default.conf
+    dest: /etc/nginx/conf.d/default.conf
 
 - name: Push default ssl config
   template:
     src: ssl.conf.j2
-    dest: /etc/nginx/default.d/ssl.conf
+    dest: /etc/nginx/conf.d/ssl.conf
 
 - name: Push default error pages config
   template:
     src: error_pages.j2
-    dest: /etc/nginx/default.d/error_pages
+    dest: /etc/nginx/conf.d/error_pages
 
 - name: Copy ssl files
   copy:
