@@ -9,3 +9,6 @@ vagrant:
 provision:
 	@echo "Provisioning vagrant box with ansible"
 	@./bin/provision-vagrant.sh
+
+.PHONY: deploy_staging
+deploy_staging:

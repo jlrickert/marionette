@@ -1,15 +1,10 @@
 ---
-- name: Install docker on arch
+- name: Install docker
   pacman:
     name: docker
     state: present
-  when: ansible_facts['os_family'] == "Arch"
-
-- name: Install docker on Debian
-  pacman:
-    name: docker
-    state: present
-  when: ansible_facts['os_family'] == "Debian"
+  tags:
+    - docker
 
 - name: Enable and start Docker
   service:

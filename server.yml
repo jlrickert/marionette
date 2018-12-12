@@ -1,8 +1,0 @@
----
-- hosts: server
-  become: yes
-  roles:
-    - common
-    - postgresql
-    - dnsserver
-    - webserver

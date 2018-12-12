@@ -1,6 +1,2 @@
 ---
-- include: packages.yml
-- include: sudo.yml
-- include: ssh.yml
-- include: tweaks.yml
 - include: docker.yml
