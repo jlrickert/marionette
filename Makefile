@@ -1,14 +1,13 @@
-all: vagrant provision
+all: vagrant
 
-.PHONY: vagrant
 vagrant:
-	@echo "Setting up base vagrant box"
-	@./bin/bootstrap-vagrant.sh
+	vagrant destroy --force
+	vagrant up
 
-.PHONY: provision
-provision:
-	@echo "Provisioning vagrant box with ansible"
-	@./bin/provision-vagrant.sh
+staging:
+	ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
+		-i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory \
+		playbooks/site.yml
 
-.PHONY: deploy_staging
-deploy_staging:
+deploy:
+	ansible-playbook -i /etc/ansible/hosts playbooks/site.yml

@@ -1,3 +1,0 @@
----
-- import_playbook: playbooks/controller.yml
-- import_playbook: playbooks/workstation.yml

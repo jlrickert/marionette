@@ -1,0 +1,22 @@
+---
+common_arch_packages:
+- ansible
+- at
+- borg
+- cloc
+- cmake
+- fasd
+- git
+- httpie
+- lm_sensors
+- mlocate
+- pandoc
+- pkgfile
+- rlwrap
+- syncthing
+- termite-terminfo
+- texlive-most
+- the_silver_searcher
+- tree
+- ufw
+- wget

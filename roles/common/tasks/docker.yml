@@ -1,28 +1,21 @@
 ---
-- name: Install docker on arch
-  pacman:
-    name: docker
-    state: present
-  when: ansible_facts['os_family'] == "Arch"
+- include_tasks: docker-debian.yml
+  when: ansible_os_family == "Debian"
 
-- name: Install docker on Debian
-  pacman:
-    name: docker
-    state: present
-  when: ansible_facts['os_family'] == "Debian"
+- include_tasks: docker-arch.yml
+  when: ansible_os_family == "Archlinux"
 
 - name: Enable and start Docker
   service:
     name: docker.service
     enabled: yes
     state: started
-  tags:
-    - docker
 
-- name: Add user to docker group
+- name: Ensure handlers are notified now to avoid firewall conflicts.
+  meta: flush_handlers
+
+- name: Add {{ common_user }} to docker group
   user:
-    name: "{{ ansible_user }}"
+    name: "{{ common_user }}"
     groups: docker
     append: yes
-  tags:
-    - docker

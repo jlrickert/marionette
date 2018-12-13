@@ -2,4 +2,6 @@
 - hosts: controller
   become: yes
   roles:
-    - { role: common }
+    - { role: common
+      , common_user: jlrickert
+      }

@@ -1,0 +1,10 @@
+---
+- name: Install universal packages
+  pacman:
+    name: "{{ common_arch_packages }}"
+    state: present
+  when: ansible_os_family == "Archlinux"
+
+- name: Install yay
+  aur:
+    name: yay

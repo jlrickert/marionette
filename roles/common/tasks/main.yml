@@ -1,2 +1,5 @@
 ---
+- include: packages.yml
+- include: user.yml
 - include: docker.yml
+- include: ssh.yml
