@@ -1,0 +1,8 @@
+---
+- name: Copy sudoers config
+  become: true
+  template:
+    src: sudoers.j2
+    dest: /etc/sudoers
+    mode: 440
+    validate: "visudo -cf %s"

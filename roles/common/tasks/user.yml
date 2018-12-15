@@ -1,21 +1,31 @@
 ---
-- name: Create user {{ common_user }}
-  user:
-    name: "{{ common_user }}"
-    shell: /bin/zsh
+- name: Ensure sudo group exists
+  group:
+    name: sudo
     state: present
-    groups:
-      - audio
-      - video
-      - wheel
-    append: true
-  when:
-    ansible_facts["os_family"] == "Archlinux"
+
+- name: Ensure wheel group exists
+  group:
+    name: wheel
+    state: present
 
 - name: Create user {{ common_user }}
   user:
     name: "{{ common_user }}"
-    shell: /bin/zsh
+    state: present
+    groups:
+      - audio
+      - sudo
+      - users
+      - video
+      - wheel
+    append: true
+  when:
+    ansible_os_family == "Archlinux"
+
+- name: Create user {{ common_user }}
+  user:
+    name: "{{ common_user }}"
     state: present
     groups:
       - audio
@@ -28,4 +38,4 @@
       - video
     append: true
   when:
-    ansible_facts["os_family"] == "Debian"
+    ansible_os_family == "Debian"

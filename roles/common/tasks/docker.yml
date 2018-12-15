@@ -1,21 +1,21 @@
 ---
-- include_tasks: docker-debian.yml
+- include: docker-debian.yml
   when: ansible_os_family == "Debian"
 
-- include_tasks: docker-arch.yml
+- include: docker-arch.yml
   when: ansible_os_family == "Archlinux"
-
-- name: Enable and start Docker
-  service:
-    name: docker.service
-    enabled: yes
-    state: started
-
-- name: Ensure handlers are notified now to avoid firewall conflicts.
-  meta: flush_handlers
 
 - name: Add {{ common_user }} to docker group
   user:
     name: "{{ common_user }}"
     groups: docker
     append: yes
+
+- name: Ensure handlers are notified now to avoid firewall conflicts.
+  meta: flush_handlers
+
+- name: Enable and start Docker
+  service:
+    name: docker.service
+    enabled: yes
+    state: started

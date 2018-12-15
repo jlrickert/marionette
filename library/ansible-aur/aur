@@ -1,6 +1,7 @@
 import os
 import platform
-from ansible.module_utils.basic import AnsibleModule
+
+from ansible.module_utils.basic import (AnsibleModule, pwd)
 
 
 def pacman_in_path(module):
@@ -30,10 +31,10 @@ def check_packages(module, pkgs):
         module.exit_json(changed=False, msg='all packages already installed')
 
 
-def download_packages(module, pkgs, dir):
+def download_packages(module, pkgs, user, dir):
     cmds = [
-        'curl -O https://aur.archlinux.org/cgit/aur.git/snapshot/%s.tar.gz',
-        '%s tar xzf %s.tar.gz'
+        'sudo -u %s curl -O https://aur.archlinux.org/cgit/aur.git/snapshot/%s.tar.gz',
+        'sudo -u %s tar xzf %s.tar.gz'
     ]
     for pkg in pkgs:
         if package_installed(module, pkg):
@@ -41,23 +42,25 @@ def download_packages(module, pkgs, dir):
         os.chdir(dir)
 
         for cmd in cmds:
-            rc, stdout, stderr = module.run_command(cmd % pkg, check_rc=False)
+            rc, stdout, stderr = module.run_command(
+                cmd % (user, pkg), check_rc=False)
             if rc != 0:
                 module.fail_json(
-                    msg='failed to download package %s, because: %s' %
-                    (pkg, stderr))
+                    msg='failed to download package %s, because: %s' % (pkg, stderr))
 
 
-def install_packages(module, pkgs, dir):
+def install_packages(module, pkgs, user, dir):
     num_installed = 0
 
     if platform.machine().startswith('arm'):
         makepkg_args = '-Acsri'
     else:
         makepkg_args = '-csri'
-    cmd = 'PKGEXT=".pkg.tar" makepkg %s --noconfirm --needed --noprogressbar' % makepkg_args
 
-    if module.params['skip_pgp']:
+    cmd = 'sudo -u %s PKGEXT=".pkg.tar" makepkg %s --noconfirm --needed --noprogressbar' % (
+        user, makepkg_args)
+
+    if module.params['skip_gpg']:
         cmd += ' --skippgpcheck'
 
     for pkg in pkgs:
@@ -81,13 +84,12 @@ def install_packages(module, pkgs, dir):
         module.exit_json(
             changed=False, msg='all packages were already installed')
 
-    pass
-
 
 def main():
     module = AnsibleModule(
         argument_spec=dict(
             name=dict(required=True),
+            user=dict(required=True),
             dir=dict(),
             skip_gpg=dict(default=True, type='bool')))
 
@@ -99,8 +101,14 @@ def main():
 
     pkgs = p['name'].split(",")
 
-    if not p['dir']:
-        dir = "/tmp/aur"
+    try:
+        pwd.getpwnam(p['user'])
+    except KeyError:
+        module.fail_json(msg='user %s does not exist' % p['user'])
+    else:
+        user = p['user']
+
+    dir = p["dir"] or "/tmp"
 
     if not os.path.exists(dir):
         module.fail_json(msg="directory %s does not exist" % dir)
@@ -108,8 +116,9 @@ def main():
     if module.check_mode:
         check_packages(module, pkgs)
 
-    download_packages(module, pkgs, dir)
-    install_packages(module, pkgs, dir)
+    download_packages(module, pkgs, user, dir)
+    install_packages(module, pkgs, user, dir)
 
 
-main()
+if __name__ == "__main__":
+    main()
