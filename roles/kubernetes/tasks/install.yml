@@ -12,16 +12,16 @@
     state: present
   register: add_repository_key
 
-# - name: Add kubernetes repository
-#   apt_repositor:
-#     repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
-#     state: present
-#     update_cache: true
+- name: Add kubernetes repository
+  apt_repository:
+    repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+    state: present
+    update_cache: true
 
-# - name: Install kubernetes
-#   apt:
-#     name:
-#       - kubelet
-#       - kubeadm
-#       - kubectl
-#     state: present
+- name: Install kubernetes
+  apt:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    state: present
