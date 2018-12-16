@@ -1,0 +1,27 @@
+---
+- name: Ensure Docker dependencies are installed
+  apt:
+    name:
+      - apt-transport-https
+    state: present
+
+- name: Add Kubernetes apt key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    id: 54A647F9048D5688D7DA2ABE6A030B21BA07F4FB
+    state: present
+  register: add_repository_key
+
+# - name: Add kubernetes repository
+#   apt_repositor:
+#     repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+#     state: present
+#     update_cache: true
+
+# - name: Install kubernetes
+#   apt:
+#     name:
+#       - kubelet
+#       - kubeadm
+#       - kubectl
+#     state: present

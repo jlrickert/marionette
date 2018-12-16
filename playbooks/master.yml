@@ -1,7 +1,8 @@
 ---
-- hosts: controller
+- hosts: master
   become: yes
   roles:
     - { role: common
       , common_user: jlrickert
       }
+    - { role: kubernetes }

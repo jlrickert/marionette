@@ -3,9 +3,8 @@
   pacman:
     name: "{{ common_arch_packages }}"
     state: present
-  when: ansible_os_family == "Archlinux"
 
 - name: Install yay
+  become_user: "{{ common_user }}"
   aur:
     name: yay
-    user: "{{ common_user }}"

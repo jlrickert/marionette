@@ -15,12 +15,25 @@ pacman -Sy --noconfirm --needed glibc python
 SCRIPT
 
 $arch_box = "terrywang/archlinux"
+$debian_box = "debian/stretch64"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.define "main-server" do |controller|
-    controller.vm.box = $arch_box
+  config.vm.define "master-server" do |controller|
+    config.vm.box = $debian_box
     controller.vm.network "private_network", ip: "192.168.77.20"
-    controller.vm.provision "shell", inline: $arch_script
+    controller.vm.provision "shell", inline: $debian_script
+  end
+
+  config.vm.define "worker1" do |controller|
+    config.vm.box = $debian_box
+    controller.vm.network "private_network", ip: "192.168.77.21"
+    controller.vm.provision "shell", inline: $debian_script
+  end
+
+  config.vm.define "worker2" do |controller|
+    config.vm.box = $debian_box
+    controller.vm.network "private_network", ip: "192.168.77.22"
+    controller.vm.provision "shell", inline: $debian_script
   end
 
   config.vm.define "laptop" do |laptop|
@@ -49,7 +62,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "desktop" => { "workstation_type" => "desktop" }
       }
       ansible.groups = {
-        "controller" => ["main-server"],
+        "master" => ["master-server"],
+        "worker" => ["worker1", "worker2"],
         "workstation" => ["desktop", "laptop"],
       }
     end

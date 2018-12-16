@@ -1,18 +1,19 @@
 # {{ ansible_managed }}
 
-Port 22
-Protocol 2
-PermitRootLogin no
-PubkeyAuthentication yes
-AuthorizedKeysFile .ssh/authorized_keys
-PasswordAuthentication no
-LoginGraceTime 1m
-ChallengeResponseAuthentication no
-UsePAM yes
-PrintMotd no
-PrintLastLog yes
+AcceptEnv LANG LC_*
 AllowGroups users
-Subsystem sftp /usr/lib/ssh/sftp-server
+AuthorizedKeysFile .ssh/authorized_keys
+ChallengeResponseAuthentication no
+LoginGraceTime 1m
+PasswordAuthentication no
+PermitRootLogin no
+Port 22
+PrintLastLog yes
+PrintMotd no
+Protocol 2
+PubkeyAuthentication yes
+Subsystem	sftp {{ common_sftp_paths[ansible_os_family] }}
+UsePAM yes
 X11Forwarding no
 
 # Preferred algorithms from:

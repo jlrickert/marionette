@@ -1,8 +1,8 @@
 ---
-- hosts: workstation
+- hosts: worker
   become: yes
   roles:
     - { role: common
       , common_user: jlrickert
       }
-    - { role: workstation }
+    - { role: kubernetes }
