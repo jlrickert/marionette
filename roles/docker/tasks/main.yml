@@ -1,15 +1,16 @@
 ---
-- include: docker-debian.yml
+- include: pkg-debian.yml
   when: ansible_os_family == "Debian"
 
-- include: docker-arch.yml
+- include: pkg-arch.yml
   when: ansible_os_family == "Archlinux"
 
-- name: Add {{ common_user }} to docker group
+- name: Add user/s to docker group
   user:
-    name: "{{ common_user }}"
+    name: "{{ item }}"
     groups: docker
     append: yes
+  with_items: "{{ docker_users | default([]) }}"
 
 - name: Ensure handlers are notified now to avoid firewall conflicts.
   meta: flush_handlers
@@ -17,5 +18,7 @@
 - name: Enable and start Docker
   service:
     name: docker.service
+    daemon_reload: yes
     enabled: yes
     state: started
+  register: started_docker

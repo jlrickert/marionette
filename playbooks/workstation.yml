@@ -1,6 +1,0 @@
----
-- hosts: workstation
-  become: yes
-  roles:
-    - { role: common, common_user: jlrickert }
-    - { role: workstation }

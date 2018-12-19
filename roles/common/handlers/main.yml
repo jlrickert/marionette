@@ -1,9 +1,4 @@
 ---
-- name: restart docker
-  service:
-    name: docker.service
-    state: restarted
-
 - name: restart sshd
   service:
     name: sshd.service

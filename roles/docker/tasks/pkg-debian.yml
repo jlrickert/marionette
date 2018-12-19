@@ -1,5 +1,5 @@
 ---
-- name: Ensure old versions of Docker are not installed
+- name: Ensure old versions of Docker are not installed (Debian)
   apt:
     name:
       - docker
@@ -7,27 +7,27 @@
       - docker.io
     state: absent
 
-- name: Ensure Docker dependencies are installed
+- name: Ensure Docker dependencies are installed (Debian)
   apt:
     name:
       - apt-transport-https
       - ca-certificates
     state: present
 
-- name: Add Docker apt key
+- name: Add Docker apt key (Debian)
   apt_key:
     url: https://download.docker.com/linux/debian/gpg
     id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
     state: present
   register: add_repository_key
 
-- name: Add Docker repository
+- name: Add Docker repository (Debian)
   apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} stable"
     state: present
     update_cache: true
 
-- name: Install docker
+- name: Install docker (Debian)
   apt:
     name: docker-ce
     state: present

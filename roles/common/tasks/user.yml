@@ -9,9 +9,9 @@
     name: wheel
     state: present
 
-- name: Create user {{ common_user }}
+- name: Create user {{ username }} (Arch)
   user:
-    name: "{{ common_user }}"
+    name: "{{ username }}"
     state: present
     groups:
       - audio
@@ -23,9 +23,9 @@
   when:
     ansible_os_family == "Archlinux"
 
-- name: Create user {{ common_user }}
+- name: Create user {{ username }} (Debian)
   user:
-    name: "{{ common_user }}"
+    name: "{{ username }}"
     state: present
     groups:
       - audio

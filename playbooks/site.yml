@@ -1,4 +1,26 @@
 ---
-- import_playbook: master.yml
-- import_playbook: worker.yml
-- import_playbook: workstation.yml
+- hosts: all
+  become: yes
+  roles:
+    - { role: common, username: jlrickert }
+    - { role: docker, docker_users: [ jlrickert ] }
+
+- hosts: workstations
+  become: yes
+  roles:
+    - { role: workstation }
+
+- hosts: kube-cluster
+  become: yes
+  roles:
+    - { role: kubernetes }
+
+- hosts: kube-masters
+  become: yes
+  roles:
+    - { role: kubernetes/master }
+  
+- hosts: kube-nodes
+  become: yes
+  roles:
+    - { role: kubernetes/node }

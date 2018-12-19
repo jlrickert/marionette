@@ -1,5 +1,0 @@
----
-- name: Install OpenSSH
-  apt:
-    name: ssh
-    update_cache: yes

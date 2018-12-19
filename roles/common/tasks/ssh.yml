@@ -1,21 +1,28 @@
 ---
-- include: ssh-debian.yml
+- name: Install OpenSSH (Debian)
+  apt:
+    name: ssh
+    update_cache: yes
   when: ansible_os_family == "Debian"
 
-- include: ssh-arch.yml
+- name: Install OpenSSH (Arch)
+  pacman:
+    name: openssh
+    state: present
   when: ansible_os_family == "Archlinux"
+
 
 - name: Make SSH directory for user
   file:
-    path: "/home/{{ common_user }}/.ssh"
+    path: "/home/{{ username }}/.ssh"
     state: directory
     mode: "0700"
-    owner: "{{ common_user }}"
+    owner: "{{ username }}"
     group: users
 
-- name: Set authorization key for {{ common_user }}
+- name: Set authorization key for {{ username }}
   authorized_key:
-    user: "{{ common_user }}"
+    user: "{{ username }}"
     state: present
     key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa.pub') }}"
 

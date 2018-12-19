@@ -1,6 +1,12 @@
 ---
 - include: user.yml
+
 - include: sudo.yml
-- include: packages.yml
-- include: docker.yml
+
+- include: pkg-debian.yml
+  when: ansible_os_family == "Debian"
+
+- include: pkg-arch.yml
+  when: ansible_os_family == "Archlinux"
+
 - include: ssh.yml

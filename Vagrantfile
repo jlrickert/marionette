@@ -4,68 +4,121 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
-$debian_script = <<-SCRIPT
+DEBIAN_SCRIPT = <<-SCRIPT
 usermod -a -G users vagrant
 apt-get -y update && apt-get install python3
 SCRIPT
 
-$arch_script = <<-SCRIPT
+ARCH_SCRIPT = <<-SCRIPT
 usermod -a -G users vagrant
 pacman -Sy --noconfirm --needed glibc python
 SCRIPT
 
-$arch_box = "terrywang/archlinux"
-$debian_box = "debian/stretch64"
+ARCH_BOX = "terrywang/archlinux"
+DEBIAN_BOX = "debian/stretch64"
+
+def configure_debian_box(config, ip)
+  config.vm.box = DEBIAN_BOX
+  config.vm.network "private_network", ip: ip
+  config.vm.provision :shell, inline: DEBIAN_SCRIPT
+  config.vm.provider :virtualbox do |vb, override|
+    vb.gui = false
+    vb.memory = 2048
+    vb.cpus = 1
+  end
+end
+
+def configure_arch_box(config, ip)
+  config.vm.box = ARCH_BOX
+  config.vm.network :private_network, ip: ip
+  config.vm.provision :shell, inline: ARCH_SCRIPT
+  config.vm.provider :virtualbox do |vb, override|
+    vb.gui = false
+    vb.memory = 2048
+    vb.cpus = 1
+  end
+end
+
+def get_hosts()
+  hosts = [
+    {
+      :name => "desktop",
+      :group => "workstations",
+      :vars => { "workstation_type" => "desktop"},
+    },
+
+    {
+      :name => "laptop",
+      :group => "workstations",
+      :vars => { "workstation_type" => "laptop"},
+    },
+
+    { :name => "kube-master1", :group => "kube-masters" }
+  ]
+  (1..2).each do |i|
+    hosts.push(
+      {
+        :name => "kube-node#{i}",
+        :group => "kube-nodes",
+      })
+  end
+  hosts
+end
+
+def get_groups_from(hosts)
+  groups = { "kube-cluster:children" => ["kube-masters", "kube-nodes"] }
+  for host in hosts do
+    if groups.has_key?(host[:group])
+      groups[host[:group]].push(host[:name])
+    else
+      groups[host[:group]] = [host[:name]]
+    end
+  end
+  groups
+end
+
+def get_host_vars_from(hosts)
+  host_vars = {}
+  for host in hosts do
+    if host.has_key?(:vars)
+      host_vars[host[:name]] = host[:vars]
+    end
+  end
+  host_vars
+end
+
+def configure_hosts(config, hosts)
+  groups = get_groups_from(hosts)
+  host_vars = get_host_vars_from(hosts)
+
+  ip_acc = 10
+  n = hosts.length
+  (1..n).each do |machine_id|
+    host = hosts[machine_id - 1]
+    config.vm.define host[:name] do |node|
+      ip = "192.168.77.#{ip_acc}"
+      if host[:group] == "workstations"
+        configure_arch_box(node, ip)
+      else
+        configure_debian_box(node, ip)
+      end
+
+      if machine_id == n
+        node.vm.provision "ansible" do |ansible|
+          ansible.host_vars = host_vars
+          ansible.groups = groups
+          ansible.limit = "all"
+          ansible.playbook = "playbooks/site.yml"
+          ansible.host_key_checking = false
+        end
+      end
+    end
+    ip_acc += 1
+  end
+end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.define "master-server" do |controller|
-    config.vm.box = $debian_box
-    controller.vm.network "private_network", ip: "192.168.77.20"
-    controller.vm.provision "shell", inline: $debian_script
-  end
-
-  config.vm.define "worker1" do |controller|
-    config.vm.box = $debian_box
-    controller.vm.network "private_network", ip: "192.168.77.21"
-    controller.vm.provision "shell", inline: $debian_script
-  end
-
-  config.vm.define "worker2" do |controller|
-    config.vm.box = $debian_box
-    controller.vm.network "private_network", ip: "192.168.77.22"
-    controller.vm.provision "shell", inline: $debian_script
-  end
-
-  config.vm.define "laptop" do |laptop|
-    laptop.vm.box = $arch_box
-    laptop.vm.network "private_network", ip: "192.168.77.10"
-    laptop.vm.provision "shell", inline: $arch_script
-    laptop.vm.provider 'virtualbox' do |vb|
-      # vb.gui = true
-    end
-  end
-
-  config.vm.define "desktop" do |desktop|
-    desktop.vm.box = $arch_box
-    desktop.vm.network "private_network", ip: "192.168.77.11"
-    desktop.vm.provision "shell", inline: $arch_script
-    desktop.vm.provider 'virtualbox' do |vb|
-      # vb.gui = true
-    end
-
-    desktop.vm.provision "ansible" do |ansible|
-      ansible.limit = "all"
-      ansible.playbook = "playbooks/site.yml"
-      ansible.become = true
-      ansible.host_vars = {
-        "laptop" => { "workstation_type" => "laptop" },
-        "desktop" => { "workstation_type" => "desktop" }
-      }
-      ansible.groups = {
-        "master" => ["master-server"],
-        "worker" => ["worker1", "worker2"],
-        "workstation" => ["desktop", "laptop"],
-      }
-    end
-  end
+  hosts = get_hosts()
+  config.vm.provider "virtualbox"
+  configure_hosts(config, hosts)
 end
