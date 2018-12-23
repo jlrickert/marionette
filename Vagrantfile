@@ -44,29 +44,37 @@ def get_hosts()
     {
       :name => "desktop",
       :group => "workstations",
-      :vars => { "workstation_type" => "desktop"},
+      :vars => { "workstation_type" => "desktop", "username" => "vagrant" },
     },
 
     {
       :name => "laptop",
       :group => "workstations",
-      :vars => { "workstation_type" => "laptop"},
+      :vars => { "workstation_type" => "laptop", "username" => "vagrant" },
     },
 
-    { :name => "kube-master1", :group => "kube-masters" }
+    {
+      :name => "kube-master1",
+      :group => "kube-masters",
+      :vars => { "username" => "vagrant" }
+    }
   ]
   (1..2).each do |i|
     hosts.push(
       {
         :name => "kube-node#{i}",
         :group => "kube-nodes",
+        :vars => { "username" => "vagrant" }
       })
   end
   hosts
 end
 
 def get_groups_from(hosts)
-  groups = { "kube-cluster:children" => ["kube-masters", "kube-nodes"] }
+  groups = {
+    "all:vars" => { "docker_users" => [ "vagrant" ] },
+    "kube-cluster:children" => [ "kube-masters", "kube-nodes"],
+  }
   for host in hosts do
     if groups.has_key?(host[:group])
       groups[host[:group]].push(host[:name])

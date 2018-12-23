@@ -2,8 +2,8 @@
 - hosts: all
   become: yes
   roles:
-    - { role: common, username: jlrickert }
-    - { role: docker, docker_users: [ jlrickert ] }
+    - { role: common }
+    - { role: docker }
 
 - hosts: workstations
   become: yes

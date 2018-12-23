@@ -31,5 +31,6 @@
   user:
     name: "{{ username }}"
     state: present
+    shell: "{{ zsh_path_res.stdout }}"
     groups: "{{ common_user_groups[ansible_os_family] }}"
     append: true

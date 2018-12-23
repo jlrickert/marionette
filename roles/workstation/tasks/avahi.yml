@@ -1,0 +1,30 @@
+---
+- name: Install Avahi
+  pacman:
+    name: ["avahi", "python-dbus", "nss-mdns"]
+    state: present
+  register:
+    avahi_installed
+
+- name: Install Avahi helpers
+  pacman:
+    name: ["python-dbus", "nss-mdns"]
+    state: present
+
+- name: Ensure dbus allows avahi
+  when: avahi_installed.changed
+  service:
+    name: dbus.service
+    state: restarted
+
+- name: Enable and start avahi
+  service:
+    name: avahi-daemon.service
+    enabled: yes
+    state: started
+
+- name: Copy nsswitch.conf
+  template:
+    src: nsswitch.conf.j2
+    dest: /etc/nsswitch.conf
+  notify: restart avahi

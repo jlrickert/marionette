@@ -4,7 +4,7 @@ vagrant:
 	vagrant up
 
 destroy:
-	vagrant destroy
+	vagrant destroy -f
 
 provision:
 	ANSIBLE_HOST_KEY_CHECKING=False \
