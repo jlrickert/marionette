@@ -9,33 +9,27 @@
     name: wheel
     state: present
 
-- name: Create user {{ username }} (Arch)
-  user:
-    name: "{{ username }}"
+- name: Install zsh for default shell (Debian)
+  when: ansible_os_family == "Debian"
+  apt:
+    name: zsh
     state: present
-    groups:
-      - audio
-      - sudo
-      - users
-      - video
-      - wheel
-    append: true
-  when:
-    ansible_os_family == "Archlinux"
 
-- name: Create user {{ username }} (Debian)
+- name: Install zsh for default shell (Arch)
+  when: ansible_os_family == "Archlinux"
+  pacman:
+    name: zsh
+    state: present
+
+- name: Get zsh shell location
+  command: which zsh
+  changed_when: false
+  failed_when: zsh_path_res.rc != 0
+  register: zsh_path_res
+
+- name: Create user {{ username }}
   user:
     name: "{{ username }}"
     state: present
-    groups:
-      - audio
-      - cdrom
-      - dip
-      - floppy
-      - netdev
-      - plugdev
-      - sudo
-      - video
+    groups: "{{ common_user_groups[ansible_os_family] }}"
     append: true
-  when:
-    ansible_os_family == "Debian"

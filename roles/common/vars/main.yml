@@ -3,28 +3,19 @@ common_sftp_paths:
   Debian: /usr/lib/openssh/sftp-server
   Archlinux: /usr/lib/ssh/sftp-server
 
-common_arch_packages:
-- ansible
-- at
-- cloc
-- cmake
-- curl
-- fasd
-- git
-- httpie
-- lm_sensors
-- mlocate
-- pkgfile
-- rlwrap
-- syncthing
-- termite-terminfo
-- the_silver_searcher
-- tree
-- wget
-- zsh
-
-common_debian_packages:
-- apt-transport-https
-- curl
-- vim
-- zsh
+common_user_groups:
+  Debian:
+    - audio
+    - cdrom
+    - dip
+    - floppy
+    - netdev
+    - plugdev
+    - sudo
+    - video
+  Archlinux:
+    - audio
+    - sudo
+    - users
+    - video
+    - wheel
