@@ -1,4 +1,6 @@
 ---
+- include: pkg.yml
 - include: user.yml
 - include: sudo.yml
 - include: ssh.yml
+- include: dotfiles.yml

@@ -1,0 +1,43 @@
+---
+- name: Ensure build directory exists
+  become_user: "{{ username }}"
+  file:
+    path: "/home/{{ username }}/build"
+    state: directory
+    mode: 0755
+
+- name: Download oh-my-zsh
+  become_user: "{{ username }}"
+  git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: "/home/{{ username }}/.oh-my-zsh"
+    force: yes
+
+- name: Download Dotfiles
+  become_user: "{{ username }}"
+  git:
+    repo: https://github.com/jlrickert/dotfiles.git
+    dest: "/home/{{ username }}/build/dotfiles"
+  register:
+    dotfiles_downloaded
+
+- name: Install Dotfiles
+  when: dotfiles_downloaded.changed
+  become_user: "{{ username }}"
+  command: python3 install.py
+  args:
+    chdir: "/home/{{ username }}/build/dotfiles"
+    creates: "/home/{{ username }}/.zshrc"
+
+- name: Download termite.terminfo
+  get_url:
+    url: https://raw.githubusercontent.com/jlrickert/termite/master/termite.terminfo
+    dest: "/home/{{ username }}/build/termite.terminfo"
+    checksum: sha256:771ecbde374ccefc40f06fb8ee0191bac1a81ab1f8f46b88288d1a9092770529
+  register: termite_terminfo_downloaded
+
+- name: Install termite.terminfo
+  when: termite_terminfo_downloaded.changed
+  shell: tic -x termite.terminfo
+  args:
+    chdir: "/home/{{ username }}/build"

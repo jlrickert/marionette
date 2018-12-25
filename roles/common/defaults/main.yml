@@ -1,3 +1,4 @@
 ---
 username: jlrickert
 gui_enabled: False
+common_role: server

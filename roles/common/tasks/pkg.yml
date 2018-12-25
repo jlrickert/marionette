@@ -1,0 +1,51 @@
+---
+- name: Install universal packages (Debian)
+  when: ansible_os_family == "Debian"
+  apt:
+    name: [
+      "apt-file",
+      "curl",
+      "git",
+      "man-db",
+      "mlocate",
+      "tree",
+      "wget",
+    ]
+    state: present
+  register: debian_packages
+
+- name: Install universal packages (Arch)
+  when: ansible_os_family == "Archlinux"
+  pacman:
+    name: [
+      "ansible",
+      "cloc",
+      "cmake",
+      "fasd",
+      "git",
+      "httpie",
+      "lm_sensors",
+      "mlocate",
+      "pkgfile",
+      "rlwrap",
+      "the_silver_searcher",
+      "tree",
+      "wget"
+    ]
+    state: present
+  register: arch_packages
+
+- name: Update apt-file database (Debian)
+  become: yes
+  when: debian_packages.changed
+  command: apt-file update
+
+- name: Update man database (Debian)
+  become: yes
+  when: debian_packages.changed
+  command: mandb
+
+- name: Update mlocate database 
+  become: yes
+  when: debian_packages.changed or arch_packages.changed
+  command: updatedb
