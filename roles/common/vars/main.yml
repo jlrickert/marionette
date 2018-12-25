@@ -12,6 +12,7 @@ common_user_groups:
     - netdev
     - plugdev
     - sudo
+    - users
     - video
   Archlinux:
     - audio

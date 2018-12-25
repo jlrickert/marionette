@@ -9,6 +9,11 @@
     name: wheel
     state: present
 
+- name: Ensure users group exists
+  group:
+    name: users
+    state: present
+
 - name: Install zsh for default shell (Debian)
   when: ansible_os_family == "Debian"
   apt:

@@ -3,7 +3,7 @@
   become: yes
   roles:
     - { role: common }
-    - { role: docker }
+    - { role: docker, docker_users: [ "{{ username | default('jlrickert') }}" ] }
 
 - hosts: workstations
   become: yes
