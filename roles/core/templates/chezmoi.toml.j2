@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+
+[data]
+  [data.git]
+    name = "{{ realname }}"
+    email = "{{ git_email }}"
+{% if git_sign_key != "" %}
+    signing_key = "{{ git_sign_key }}"
+{% endif %}
