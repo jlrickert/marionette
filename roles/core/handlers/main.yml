@@ -1,2 +1,7 @@
 ---
 # handlers file for core
+- name: restart sshd
+  when: ansible_hostname != "instance"
+  service:
+    name: sshd.service
+    state: restarted

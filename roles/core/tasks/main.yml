@@ -1,2 +1,102 @@
 ---
-# tasks file for core
+- name: Install packages (Ubuntu)
+  when: ansible_os_family == "Debian"
+  apt:
+    name: [
+      "fasd",
+      "git",
+      "htop",
+      "lsof",
+      "python3-pip",
+      "python3",
+      "silversearcher-ag",
+      "ssh",
+      "tree",
+      "zsh"
+    ]
+    state: present
+  register: ubuntu_packages
+
+- name: Install additional packages (Ubuntu)
+  when: ansible_os_family == "Debian"
+  apt:
+    name: "{{ ubuntu_additional_packages }}"
+    state: present
+
+- name: Get zsh shell location
+  command: which zsh
+  changed_when: false
+  failed_when: zsh_path_res.rc != 0
+  register: zsh_path_res
+
+- name: "Create user {{ username }}"
+  user:
+    name: "{{ username }}"
+    state: present
+    groups:
+      - "sudo"
+    shell: "{{ zsh_path_res.stdout }}"
+    append: true
+
+- name: Copy sudoers config
+  become: true
+  template:
+    src: sudoers.j2
+    dest: /etc/sudoers
+    mode: "0440"
+    validate: "visudo -cf %s"
+
+- name: Make SSH directory for user
+  file:
+    path: "/home/{{ username }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Set authorization key for {{ username }}
+  authorized_key:
+    user: "{{ username }}"
+    state: present
+    key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa.pub') }}"
+
+# - name: "Install pipenv for {{ username }}"
+#   become: true
+#   become_user: "{{ username }}"
+#   pip:
+#     name: pipenv
+#     extra_args: --user
+
+- name: Docker hack so sshd config may be checked
+  become: true
+  file:
+    path: "/run/sshd"
+    state: directory
+
+- name: Copy sshd configuration
+  become: true
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: "0644"
+    validate: /usr/sbin/sshd -t -f %s
+  notify: restart sshd
+
+- name: Enable and start SSH Daemon
+  when: ansible_hostname != "instance"
+  service:
+    name: sshd.service
+    enabled: yes
+    state: started
+
+- name: Download oh-my-zsh
+  become: true
+  become_user: "{{ username }}"
+  git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: "/home/{{ username }}/.oh-my-zsh"
+    version: master
+    update: yes
+    force: yes

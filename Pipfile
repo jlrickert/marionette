@@ -4,8 +4,8 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-molecule = "*"
-docker = "*"
+molecule = {extras = ["docker"],version = "*"}
+autopep8 = "*"
 
 [packages]
 ansible = "*"

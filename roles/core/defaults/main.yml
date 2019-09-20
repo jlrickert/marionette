@@ -1,2 +1,4 @@
 ---
 # defaults file for core
+username: jlrickert
+ubuntu_additional_packages: []
