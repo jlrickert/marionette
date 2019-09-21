@@ -4,15 +4,59 @@
 # https://aka.ms/yaml
 trigger:
 - master
+- pipeline
 
-pool:
-  vmImage: 'ubuntu-latest'
+stages:
+- stage: Test
+  jobs:
+  - job: runTest
+    pool:
+      vmImage: 'ubuntu-16.04'
+    timeoutInMinutes: 10
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.6'
+        addToPath: true
+        architecture: 'x64'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+    - script: |
+        python -m pip install --upgrade pipenv
+        pipenv sync -d
+      displayName: "SETUP: Install dependencies"
+      condition: succeeded()
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    - script: |
+        pipenv shell
+        root=$(pwd)
+        for role in $root/roles/*
+        do
+          cd $role
+          pipenv run molecule test --all
+          status=$?
+          if [ $status -ne 0 ]; then
+            exit $status
+          fi
+          cd $root
+        done
+    condition: succeeded()
+
+- stage: DeployProd
+  dependsOn: Test
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-16.04'
+    environment: 'production'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: ms-vscs-rm.vss-services-ansible.ansible-task.Ansible@0
+            displayName: Deploy
+            inputs:
+              playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/_marionette/server.yml'
+              inventoriesAgentMachine: inlineContent
+              inventoryHostListAgentMachine: |
+                [servers]
+                jlrickert.me

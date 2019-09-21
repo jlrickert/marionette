@@ -1,5 +1,5 @@
 ---
-- hosts: workstations
+- hosts: Workstations
   become: yes
   roles:
     - { role: core }

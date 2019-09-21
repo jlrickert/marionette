@@ -63,12 +63,11 @@
     state: present
     key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa.pub') }}"
 
-# - name: "Install pipenv for {{ username }}"
-#   become: yes
-#   become_user: "{{ username }}"
-#   pip:
-#     name: pipenv
-#     extra_args: --user
+- name: Set azure devops key
+  authorized_key:
+    user: "{{ username }}"
+    state: present
+    key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa_azure.pub') }}"
 
 - name: Docker hack so sshd config may be tested
   become: yes
@@ -156,7 +155,3 @@
   changed_when: chezmoi_res.rc != 0
   command: chezmoi apply
   register: chezmoi_res
-
-- name: Debug chezmoi magic
-  debug:
-    msg: "{{ chezmoi_res }}"
