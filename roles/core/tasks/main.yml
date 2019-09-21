@@ -57,20 +57,22 @@
     owner: "{{ username }}"
     group: "{{ username }}"
 
-- name: Set authorization key for {{ username }}
+- name: Set authorization keys for {{ username }}
   authorized_key:
     user: "{{ username }}"
     state: present
-    key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa.pub') }}"
+    key: "{{ item }}"
+  loop: "{{ ssh_keys }}"
 
-- name: Set azure devops key
-  authorized_key:
-    user: "{{ username }}"
-    state: present
-    key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa_azure.pub') }}"
+# - name: Set azure devops key
+#   authorized_key:
+#     user: "{{ username }}"
+#     state: present
+#     key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa_azure.pub') }}"
 
 - name: Docker hack so sshd config may be tested
   become: yes
+  when: ansible_hostname == "instance"
   file:
     path: "/run/sshd"
     state: directory

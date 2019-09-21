@@ -9,54 +9,68 @@ trigger:
 stages:
 - stage: Test
   jobs:
-  - job: runTest
+  - template: pipeline/jobs/test_role.yml
+    parameters:
+      name: core
+
+  - template: pipeline/jobs/test_role.yml
+    parameters:
+      name: docker
+
+  - template: pipeline/jobs/test_role.yml
+    parameters:
+      name: workstation
+
+- stage: DeployProd
+  displayName: Deploy to Production
+  dependsOn: Test
+  jobs:
+  - job: Deploy
+    displayName: Deploy to Production
     pool:
-      vmImage: 'ubuntu-16.04'
-    timeoutInMinutes: 10
+      vmImage: "ubuntu-16.04"
     steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.6'
+        versionSpec: "3.6"
         addToPath: true
-        architecture: 'x64'
+        architecture: "x64"
+
+    - task: DownloadSecureFile@1
+      name: knownHosts
+      displayName: "SETUP: Download known_hosts file"
+      inputs:
+        secureFile: "known_hosts"
+
+    - task: DownloadSecureFile@1
+      name: inventory
+      displayName: "SETUP: Download inventory file"
+      inputs:
+        secureFile: "inventory.ini"
+
+    - task: DownloadSecureFile@1
+      name: privKey
+      displayName: "SETUP: Download SSH private key"
+      inputs:
+        secureFile: "id_rsa_azure"
+    
+    - script: chmod 0600 $(privKey.secureFilePath)
+      displayName: Set correct permissions on SSH private key
 
     - script: |
         python -m pip install --upgrade pipenv
-        pipenv sync -d
+        pipenv sync
       displayName: "SETUP: Install dependencies"
       condition: succeeded()
 
     - script: |
-        pipenv shell
-        root=$(pwd)
-        for role in $root/roles/*
-        do
-          cd $role
-          pipenv run molecule test --all
-          status=$?
-          if [ $status -ne 0 ]; then
-            exit $status
-          fi
-          cd $root
-        done
-    condition: succeeded()
-
-- stage: DeployProd
-  dependsOn: Test
-  jobs:
-  - deployment: Deploy
-    pool:
-      vmImage: 'ubuntu-16.04'
-    environment: 'production'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: ms-vscs-rm.vss-services-ansible.ansible-task.Ansible@0
-            displayName: Deploy
-            inputs:
-              playbookPathOnAgentMachine: '$(System.DefaultWorkingDirectory)/_marionette/server.yml'
-              inventoriesAgentMachine: inlineContent
-              inventoryHostListAgentMachine: |
-                [servers]
-                jlrickert.me
+        ansible-playbook \
+             --inventory $(inventory.secureFilePath) \
+             --user jlrickert \
+             --private-key $(privKey.secureFilePath) \
+             server.yml
+      env:
+        ANSIBLE_SSH_ARGS: -o UserKnownHostsFile=$(knownHosts.secureFilePath)
+        ANSIBLE_HOST_KEY_CHECKING: False
+      condition: succeeded()
+      displayName: "DEPLOY: Deploying to all targets"
