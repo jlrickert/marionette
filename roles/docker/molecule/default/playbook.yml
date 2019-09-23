@@ -2,4 +2,4 @@
 - name: Converge
   hosts: all
   roles:
-    - role: docker
+    - { role: docker, docker_users: [ "jlrickert" ] }

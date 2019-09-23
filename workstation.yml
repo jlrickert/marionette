@@ -3,3 +3,4 @@
   become: yes
   roles:
     - { role: core }
+    - { role: docker, docker_users: [ "jlrickert" ] }

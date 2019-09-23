@@ -7,7 +7,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_packages(host):
-    for name in ["ssh", "python3", "python3-pip"]:
+    for name in ["git", "silversearcher-ag", "ssh", "vim", "zsh"]:
         pkg = host.package(name)
         assert pkg.is_installed
 

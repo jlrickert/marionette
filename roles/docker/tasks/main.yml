@@ -1,2 +1,41 @@
 ---
-# tasks file for docker
+- name: Install required system packages
+  apt:
+    name: [
+      'apt-transport-https',
+      'ca-certificates',
+      'curl',
+      'software-properties-common',
+    ]
+    state: present
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+
+- name: Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: yes
+
+- name: Enable and start Docker Daemon
+  when: ansible_hostname != "instance"
+  service:
+    name: docker.service
+    enabled: yes
+    state: started
+
+- name: Add users to docker group
+  user:
+    name: "{{ item }}"
+    groups:
+      - "docker"
+    append: yes
+  loop: "{{ docker_users }}"

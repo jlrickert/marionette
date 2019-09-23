@@ -3,12 +3,11 @@
   when: ansible_os_family == "Debian"
   apt:
     name: [
+      "aptitude",
       "fasd",
       "git",
       "htop",
       "lsof",
-      "python3-pip",
-      "python3",
       "silversearcher-ag",
       "ssh",
       "tree",
@@ -64,12 +63,6 @@
     key: "{{ item }}"
   loop: "{{ ssh_keys }}"
 
-# - name: Set azure devops key
-#   authorized_key:
-#     user: "{{ username }}"
-#     state: present
-#     key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa_azure.pub') }}"
-
 - name: Docker hack so sshd config may be tested
   become: yes
   when: ansible_hostname == "instance"
@@ -123,16 +116,6 @@
     owner: "{{ username }}"
     group: "{{ username }}"
   register: chezmoi_res
-
-# - name: Initialize dotfiles
-#   become: yes
-#   become_user: "{{ username }}"
-#   command: chezmoi init --apply https://github.com/jlrickert/dotfiles.git
-#   args:
-#     creates: "/home/{{ username }}/.local/share/chezmoi"
-#   # changed_when: chezmoi_res.rc != 0
-#   # failed_when: chezmoi_res.rc != 0
-#   register: chezmoi_res
 
 - name: Update dotfiles
   become: yes

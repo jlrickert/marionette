@@ -1,2 +1,6 @@
 ---
-# defaults file for docker
+state: started
+enabled: yes
+swarm_master: no
+swarm_join_key: ""
+docker_users: []
