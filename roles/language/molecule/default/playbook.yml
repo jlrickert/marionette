@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+  - { role: language,
+      install_nodejs: yes,
+      npm_version: "13.0.1"
+    }

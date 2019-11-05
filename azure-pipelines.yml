@@ -19,6 +19,10 @@ stages:
 
   - template: pipeline/jobs/test_role.yml
     parameters:
+      name: language
+
+  - template: pipeline/jobs/test_role.yml
+    parameters:
       name: workstation
 
 - stage: DeployProd

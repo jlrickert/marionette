@@ -1,6 +1,8 @@
 ---
-- hosts: Workstations
+- hosts: workstations
   become: yes
   roles:
-    - { role: core }
-    - { role: docker, docker_users: [ "jlrickert" ] }
+  - { role: core }
+  - { role: docker, docker_users: [ "jlrickert" ] }
+  - { role: language, install_nodejs: yes }
+  - { role: vpn, client: yes }
