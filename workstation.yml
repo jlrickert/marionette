@@ -4,5 +4,9 @@
   roles:
   - { role: core }
   - { role: docker, docker_users: [ "jlrickert" ] }
-  - { role: language, install_nodejs: yes }
+  - { role: language,
+      nodejs_install: yes,
+      java_install: yes,
+      scala_install: yes
+      }
   - { role: vpn, client: yes }
