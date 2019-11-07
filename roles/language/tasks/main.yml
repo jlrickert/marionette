@@ -1,3 +1,19 @@
 ---
+- name: Ensure apt-transport-https is installed.
+  apt:
+    name: apt-transport-https
+    state: present
+
+- name: Ensure apt-transport-https is installed.
+  apt:
+    name: apt-transport-https
+    state: present
+
 - import_tasks: node.yml
-  when: install_nodejs
+  when: nodejs_install
+
+- import_tasks: java.yml
+  when: java_install
+
+- import_tasks: scala.yml
+  when: scala_install

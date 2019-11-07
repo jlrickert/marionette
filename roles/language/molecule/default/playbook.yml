@@ -3,6 +3,7 @@
   hosts: all
   roles:
   - { role: language,
-      install_nodejs: yes,
-      npm_version: "13.0.1"
+      nodejs_install: yes,
+      scala_install: yes,
+      java_install: yes
     }

@@ -1,0 +1,5 @@
+---
+- name: Ensure java is installed
+  apt:
+    name: default-jdk
+    state: present

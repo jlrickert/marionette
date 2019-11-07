@@ -1,4 +1,7 @@
 ---
 # defaults file for language
-install_nodejs: no
+nodejs_install: no
 nodejs_version: "13.x"
+scala_install: no
+scala_version: "1.x"
+java_install: no
