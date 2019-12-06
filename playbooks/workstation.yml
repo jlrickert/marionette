@@ -3,12 +3,12 @@
   become: yes
   roles:
     - { role: common }
+    - { role: dotfiles, dotfile_users: ["jlrickert"] }
+    - { role: syncthing, syncthing_users: ["jlrickert"] }
     - { role: docker, docker_users: ["jlrickert"] }
-    - { role: dotfiles }
     - {
         role: language,
         nodejs_install: yes,
         java_install: yes,
         scala_install: yes,
       }
-

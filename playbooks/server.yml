@@ -3,5 +3,5 @@
   become: yes
   roles:
     - { role: common }
-    - { role: dotfiles }
+    - { role: dotfiles, dotfile_users: ["jlrickert"] }
     - { role: docker, docker_users: ["jlrickert"] }
