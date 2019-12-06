@@ -1,0 +1,14 @@
+---
+- hosts: workstations
+  become: yes
+  roles:
+    - { role: common }
+    - { role: docker, docker_users: ["jlrickert"] }
+    - { role: dotfiles }
+    - {
+        role: language,
+        nodejs_install: yes,
+        java_install: yes,
+        scala_install: yes,
+      }
+

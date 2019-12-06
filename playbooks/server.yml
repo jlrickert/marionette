@@ -1,0 +1,7 @@
+---
+- hosts: servers
+  become: yes
+  roles:
+    - { role: common }
+    - { role: dotfiles }
+    - { role: docker, docker_users: ["jlrickert"] }

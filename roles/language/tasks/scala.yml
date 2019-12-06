@@ -9,8 +9,7 @@
     repo: "{{ item }}"
     state: present
   with_items:
-    - "deb https://dl.bintray.com/sbt/debian /"
-    - "deb-src https://dl.bintray.com/sbt/debian /"
+    - "deb [arch=amd64] https://dl.bintray.com/sbt/debian /"
   notify: Update cache
 
 - name: Ensure sbt is installed

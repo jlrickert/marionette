@@ -72,7 +72,7 @@ stages:
              --inventory $(inventory.secureFilePath) \
              --user jlrickert \
              --private-key $(privKey.secureFilePath) \
-             server.yml
+             playbooks/server.yml
       env:
         ANSIBLE_SSH_ARGS: -o UserKnownHostsFile=$(knownHosts.secureFilePath)
         ANSIBLE_HOST_KEY_CHECKING: False
