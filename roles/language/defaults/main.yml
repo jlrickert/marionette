@@ -5,3 +5,4 @@ nodejs_version: "13.x"
 scala_install: no
 scala_version: "1.x"
 java_install: no
+python_install: no

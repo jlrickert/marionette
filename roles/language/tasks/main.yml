@@ -17,3 +17,6 @@
 
 - import_tasks: scala.yml
   when: scala_install
+
+- import_tasks: python.yml
+  when: "python_install and ansible_distribution_release == 'bionic'"

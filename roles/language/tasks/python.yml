@@ -1,0 +1,9 @@
+---
+- name: Add deadsnake repositories for python
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+  with_items:
+    - "deb [arch=amd64] http://ppa.launchpad.net/deadsnakes/ppa/ubuntu {{ ansible_distribution_release }} main"
+    - "deb-src [arch=amd64] http://ppa.launchpad.net/deadsnakes/ppa/ubuntu {{ ansible_distribution_release }} main"
+  notify: update cache

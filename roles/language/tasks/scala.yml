@@ -10,7 +10,7 @@
     state: present
   with_items:
     - "deb [arch=amd64] https://dl.bintray.com/sbt/debian /"
-  notify: Update cache
+  notify: update cache
 
 - name: Ensure sbt is installed
   apt:
