@@ -1,9 +1,20 @@
 # {{ ansible_managed }}
 
 [data]
-  [data.git]
-    name = "{{ realname }}"
-    email = "{{ git_email }}"
+  git_name = "{{ git_user }}"
+  git_email = "{{ git_email }}"
 {% if git_sign_key != "" %}
-    signing_key = "{{ git_sign_key }}"
+  git_signing_key = "{{ git_sign_key }}"
 {% endif %}
+
+  i3_ethernet_interfaces = [
+    {% for interface in i3_ethernet_interfaces %}
+    "{{ interface }}",
+    {% endfor %}
+  ]
+
+  i3_wireless_interfaces = [
+    {% for interface in i3_wireless_interfaces %}
+    "{{ interface }}",
+    {% endfor %}
+  ]

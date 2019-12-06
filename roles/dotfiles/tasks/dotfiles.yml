@@ -1,0 +1,57 @@
+---
+- name: Install oh my zsh for {{ username }}
+  become: yes
+  become_user: "{{ username }}"
+  git:
+    repo: https://github.com/robbyrussell/oh-my-zsh.git
+    dest: "~/.oh-my-zsh"
+    update: yes
+    version: master
+
+- name: Install chezmoi binary
+  apt:
+    deb: https://github.com/twpayne/chezmoi/releases/download/v1.6.5/chezmoi_1.6.5-1226_linux_amd64.deb
+    state: present
+
+- name: "Create chezmoi config directory for {{ username }}"
+  become: yes
+  become_user: "{{ username }}"
+  file:
+    path: "~/.config/chezmoi"
+    state: directory
+
+- name: "Install chezmoi config for user {{ username }}"
+  become: yes
+  become_user: "{{ username }}"
+  template:
+    src: chezmoi.toml.j2
+    dest: "~/.config/chezmoi/chezmoi.toml"
+  vars:
+    i3_ethernet_interfaces: "{{ hostvars[inventory_hostname]['ansible_interfaces'] | select('match', '^enp') | list }}"
+    i3_wireless_interfaces: "{{ hostvars[inventory_hostname]['ansible_interfaces'] | select('match', '^wlp') | list }}"
+  register: chezmoi_res
+
+# - name: "Update dotfiles for user {{ username }}"
+#   become: yes
+#   become_user: "{{ username }}"
+#   git:
+#     repo: https://github.com/jlrickert/dotfiles.git
+#     dest: "~/.local/share/chezmoi"
+#     update: yes
+#     version: master
+
+# - name: Keep chezmoi from complaining about "~/.local/share/chezmoi" not being private
+#   become: yes
+#   become_user: "{{ username }}"
+#   file:
+#     path: ~/.local/share/chezmoi
+#     state: directory
+#     mode: "0700"
+#   with_items: dotfile_users
+
+- name: Apply chezmoi magic
+  become: yes
+  become_user: "{{ username }}"
+  changed_when: chezmoi_res.rc != 0
+  command: chezmoi apply
+  register: chezmoi_res
