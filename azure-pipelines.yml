@@ -11,7 +11,7 @@ stages:
   jobs:
   - template: pipeline/jobs/test_role.yml
     parameters:
-      name: core
+      name: common
 
   - template: pipeline/jobs/test_role.yml
     parameters:
