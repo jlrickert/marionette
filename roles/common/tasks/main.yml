@@ -1,9 +1,10 @@
 ---
-- name: Install packages (Ubuntu)
+- name: Install packages (Debian)
   when: ansible_os_family == "Debian"
   apt:
     name: [
       "aptitude",
+      "apt-file",
       "fasd",
       "git",
       "htop",
@@ -19,10 +20,10 @@
     state: present
   register: ubuntu_packages
 
-- name: Install additional packages (Ubuntu)
+- name: Install additional packages (Debian)
   when: ansible_os_family == "Debian"
   apt:
-    name: "{{ ubuntu_additional_packages }}"
+    name: "{{ debian_additional_packages }}"
     state: present
 
 - name: Get zsh shell location
