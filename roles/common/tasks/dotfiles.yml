@@ -1,0 +1,19 @@
+---
+- name: Install chezmoi binary
+  apt:
+    deb: https://github.com/twpayne/chezmoi/releases/download/v1.7.17/chezmoi_1.7.17_linux_amd64.deb
+    state: present
+
+- name: Installing dotfiles via chezmoi for {{ username }}
+  become: yes
+  become_user: "{{ username }}"
+  command: chezmoi init --apply https://github.com/jlrickert/dotfiles.git
+  args:
+    creates: /home/jlrickert/.local/share/chezmoi
+
+- name: Updating dotfiles via chezmoi for {{ username }}
+  become: yes
+  become_user: "{{ username }}"
+  changed_when: chezmoi_res.rc != 0
+  command: chezmoi update
+  register: chezmoi_res

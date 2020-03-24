@@ -1,0 +1,27 @@
+---
+- name: Install packages (Debian)
+  when: ansible_os_family == "Debian"
+  apt:
+    name: [
+      "aptitude",
+      "apt-file",
+      "fasd",
+      "git",
+      "htop",
+      "lsof",
+      "neovim",
+      "python-neovim",
+      "python3-neovim",
+      "silversearcher-ag",
+      "ssh",
+      "tree",
+      "zsh"
+    ]
+    state: present
+  register: ubuntu_packages
+
+- name: Install additional packages (Debian)
+  when: ansible_os_family == "Debian"
+  apt:
+    name: "{{ additional_packages }}"
+    state: present

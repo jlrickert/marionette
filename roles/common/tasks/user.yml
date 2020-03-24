@@ -1,0 +1,32 @@
+---
+- name: Get zsh shell location
+  command: which zsh
+  changed_when: no
+  failed_when: zsh_path_res.rc != 0
+  register: zsh_path_res
+
+- name: "Create user {{ username }}"
+  user:
+    name: "{{ username }}"
+    state: present
+    comment: "Admin user"
+    groups:
+      - "sudo"
+    shell: "{{ zsh_path_res.stdout }}"
+    create_home: yes
+    append: yes
+
+- name: Make SSH directory for user
+  file:
+    path: "/home/{{ username }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+
+- name: Set authorization keys for {{ username }}
+  authorized_key:
+    user: "{{ username }}"
+    state: present
+    key: "{{ item }}"
+  loop: "{{ ssh_keys }}"
