@@ -1,0 +1,20 @@
+---
+- name: Ensure localhost is set in /etc/hosts
+  become: yes
+  become_user: root
+  vars:
+    ipv4_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+  lineinfile:
+    path: "/etc/hosts"
+    regexp: '^127\.0\.0\.1'
+    line: "127.0.0.1\tlocalhost"
+    state: present
+
+- name: Ensure FQDN is set in /etc/hosts
+  become: yes
+  become_user: root
+  lineinfile:
+    path: "/etc/hosts"
+    regexp: '^127\.0\.1\.1'
+    line: "127.0.1.1\t{{ inventory_hostname }}\t{{ ansible_hostname }}"
+    state: present
