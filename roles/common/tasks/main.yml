@@ -1,8 +1,4 @@
 ---
-- import_tasks: common.yml
-  tags:
-    - common
-
 - import_tasks: packages.yml
   tags:
     - common
@@ -19,12 +15,17 @@
     - user
     - dotfiles
 
-- import_tasks: ssh.yml
+- import_tasks: sudo.yml
   tags:
     - common
-    - ssh
+    - sudo
 
 - import_tasks: hostnames.yml
   tags:
     - common
     - hostnames
+
+- import_tasks: ssh.yml
+  tags:
+    - common
+    - ssh

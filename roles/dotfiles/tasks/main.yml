@@ -1,5 +1,0 @@
----
-- include_tasks: dotfiles.yml
-  vars:
-    username: "{{ item }}"
-  with_items: "{{ dotfile_users }}"

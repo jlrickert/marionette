@@ -1,7 +1,10 @@
 # {{ ansible_managed }}
 
 127.0.0.1	localhost
-127.0.1.1	{{ inventory_hostname }}	{{ ansible_hostname }}
+127.0.1.1	{{ ansible_hostname }}.{{ common_local_domain_name }}	{{ ansible_hostname }}
+
+159.203.49.202	jlrickert.me	www.jlrickert.me	vpn.jlrickert.me	korvas.jlrickert.local
+47.41.91.252	lf.jlrickert.me	neuron.jlrickert.local
 
 # The following lines are desirable for IPv6 capable hosts
 ::1	ip6-localhost ip6-loopback

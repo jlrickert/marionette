@@ -1,20 +1,31 @@
 ---
-- name: Ensure localhost is set in /etc/hosts
+- name: Ensure localhost is set in /etc/hosts 
   become: yes
   become_user: root
   vars:
     ipv4_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
   lineinfile:
-    path: "/etc/hosts"
-    regexp: '^127\.0\.0\.1'
+    path: /etc/hosts
+    regexp: '^127\.0\.0\.1.*localhost'
     line: "127.0.0.1\tlocalhost"
     state: present
 
-- name: Ensure FQDN is set in /etc/hosts
+- name: Ensure local FQDN is set in /etc/hosts 
   become: yes
   become_user: root
   lineinfile:
-    path: "/etc/hosts"
+    path: /etc/hosts
     regexp: '^127\.0\.1\.1'
-    line: "127.0.1.1\t{{ inventory_hostname }}\t{{ ansible_hostname }}"
+    line: "127.0.1.1\t{{ ansible_hostname }}.{{ common_local_domain_name }}\t{{ ansible_hostname }}"
     state: present
+
+- name: "Build hosts file"
+  become: yes
+  become_user: root
+  lineinfile: 
+    dest: /etc/hosts
+    regexp: '.*{{ item }}$'
+    line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }}\t{{ item }}"
+    state: present
+  when: hostvars[item]['ansible_default_ipv4'] is defined
+  with_items: "{{ groups['all'] }}"

@@ -1,0 +1,3 @@
+easyrsa_common_name: "vpn.jlrickert.me"
+easyrsa_pki_user: "root"
+easyrsa_pki_path: "/etc/openvpn/easyrsa"

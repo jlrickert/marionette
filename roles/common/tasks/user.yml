@@ -5,11 +5,11 @@
   failed_when: zsh_path_res.rc != 0
   register: zsh_path_res
 
-- name: "Create user {{ username }}"
+- name: "Create user {{ common_username }}"
   user:
-    name: "{{ username }}"
+    name: "{{ common_username }}"
     state: present
-    comment: "Admin user"
+    comment: "{{ common_realname }}"
     groups:
       - "sudo"
     shell: "{{ zsh_path_res.stdout }}"
@@ -18,15 +18,15 @@
 
 - name: Make SSH directory for user
   file:
-    path: "/home/{{ username }}/.ssh"
+    path: "/home/{{ common_username }}/.ssh"
     state: directory
     mode: "0700"
-    owner: "{{ username }}"
-    group: "{{ username }}"
+    owner: "{{ common_username }}"
+    group: "{{ common_username }}"
 
-- name: Set authorization keys for {{ username }}
+- name: "Set authorization keys for {{ common_username }}"
   authorized_key:
-    user: "{{ username }}"
+    user: "{{ common_username }}"
     state: present
     key: "{{ item }}"
-  loop: "{{ ssh_keys }}"
+  loop: "{{ common_ssh_keys }}"

@@ -1,8 +1,6 @@
 ---
 # defaults file for core
-realname: Jared Rickert
-username: jlrickert
-additional_packages: []
-ssh_keys:
-  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3J1lrU5UKlYhMgDOGATShFfbcZ2kDqdxfs5kXfTmph2q2i5Sp/i72M7fHpfugGyp9crAI/Yv/mJqgAG0tkmW4NLXk9dOUynQXuOkchs/zjp6qz72LuB9WREim1R/ADyv683RWBLSvZdSLt4OuQ/gWD6KCxJhnaAeUlanT0PsrUTaAlf760pOpwODP1GyQk3yalcL9HnoX0OLA+/B/SRY70TQVIhY247/rT96rITZfoWHBk1fjHbxaVQWQG37+EOXyiTWRJMajP4pYo9T2jGbqRGCIOv0EtfF/wbG4TRQsfbnALI6stTpC1SCv/x2KoTb61W3nlS/pDaTc+PmT/zQL Azure Devops
-  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0TsLF3yUCDfs0g+2GVqb1M5jFsUG99otKjKZ6kRYXkqRyDMntmrjz+5OpwP0pS1k27sEZ5EbASxN7+HwZxGB2QviD4Y7EwcZJHZR71OZXqd6bvm6scTC9SBOqWApThSJpJ4AYmRVpPGBFUX9ihTmOgTX1M4PsQt8PN5MMgpUxv/6/EyA1ioI50XJyOScX5XB8umQ/yduxXSJGItebxp2V9D0iCcefhWa0dWMGA8RS/i5sHN1L5K9RFLRMg1fag9M42sR6B9ZhhuCoLhpCJ1Uk6jbS6u6UZ7a4yzm+x3vHoHDUg+GjHtYtyDEYzjrxVqWGlCqj7IHtKTmFsLgDniQJ admin@jlrickert.me-2017-05-15
+common_realname: "Admin user"
+common_username: "{{ lookup('env', 'USER') | default('jlrickert') }}"
+common_additional_packages: []
+common_ssh_keys: []

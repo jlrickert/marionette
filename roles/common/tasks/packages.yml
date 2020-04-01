@@ -18,10 +18,10 @@
       "zsh"
     ]
     state: present
-  register: ubuntu_packages
+  register: debian_packages
 
 - name: Install additional packages (Debian)
   when: ansible_os_family == "Debian"
   apt:
-    name: "{{ additional_packages }}"
+    name: "{{ common_additional_packages }}"
     state: present
