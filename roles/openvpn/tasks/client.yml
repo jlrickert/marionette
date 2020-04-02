@@ -1,0 +1,30 @@
+---
+- name: "Create {{ openvpn_pki_path }}"
+  become: yes
+  become_user: "{{ openvpn_pki_user }}"
+  file:
+    path: "{{ openvpn_pki_path }}"
+    state: directory
+    mode: 0755
+    owner: "{{ openvpn_pki_user }}"
+    group: "{{ openvpn_pki_user }}"
+
+- name: Download EasyRSA
+  become: yes
+  become_user: "{{ openvpn_pki_user }}"
+  unarchive: 
+    src: https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.7/EasyRSA-3.0.7.tgz
+    dest: "{{ openvpn_pki_path }}"
+    creates: "{{ openvpn_pki_path }}/easyrsa"
+    remote_src: yes
+    extra_opts:
+      - "--strip-components"
+      - "1"
+  register: easyrsa_download_res
+
+- name: Deploy vars configuration
+  become: yes
+  become_user: "{{ openvpn_pki_user }}"
+  template:
+    src: easyrsa3_vars.j2
+    dest: "{{ openvpn_pki_path }}/vars"

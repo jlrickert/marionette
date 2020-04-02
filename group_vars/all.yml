@@ -21,6 +21,8 @@ openvpn_auth_digest: "SHA256"
 openvpn_path: "/etc/openvpn"
 openvpn_pki_user: "root"
 openvpn_pki_path: "/etc/openvpn/easyrsa"
+openvpn_ca_pki_user: "{{ lookup('env', 'USER') | default('jlrickert') }}"
+openvpn_ca_pki_path: "{{ lookup('env', 'SECRETS') }}/openvpn/easyrsa-ca"
 openvpn_clients:
   - myelin
   - cortex

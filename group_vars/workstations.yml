@@ -1,2 +1,0 @@
-openvpn_pki_user: "{{ lookup('env', 'USER') | default('jlrickert') }}"
-openvpn_pki_path: "/etc/openvpn/easyrsa"

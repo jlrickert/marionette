@@ -1,0 +1,90 @@
+---
+- name: "Create {{ openvpn_pki_path }} on server"
+  file:
+    path: "{{ openvpn_pki_path }}"
+    state: directory
+    mode: 0755
+    owner: "root"
+    group: "root"
+
+- name: Download EasyRSA on server
+  unarchive: 
+    src: https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.7/EasyRSA-3.0.7.tgz
+    dest: "{{ openvpn_pki_path }}"
+    creates: "{{ openvpn_pki_path }}/easyrsa"
+    remote_src: yes
+    extra_opts:
+      - "--strip-components"
+      - "1"
+  register: easyrsa_download_res
+
+- name: Deploy server vars configuration
+  template:
+    src: easyrsa3_vars.j2
+    dest: "{{ openvpn_pki_path }}/vars"
+
+- name: Initialize server PKI 
+  command:
+    cmd: ./easyrsa init-pki
+    chdir: "{{ openvpn_pki_path }}"
+    creates: "{{ openvpn_pki_path }}/pki/private"
+
+- name: Create request cert for server
+  command:
+    cmd: ./easyrsa gen-req server nopass
+    chdir: "{{ openvpn_pki_path }}"
+    creates: "{{ openvpn_pki_path }}/pki/private/server.key"
+
+- name: Fetch server request certificate
+  fetch:
+    src: "{{ openvpn_pki_path }}/pki/reqs/server.req"
+    dest: "/tmp/prefix-{{ inventory_hostname }}/"
+    flat: yes
+  register: server_req_fetch_res
+
+- name: Import server request
+  become: yes
+  become_user: "{{ openvpn_ca_pki_user }}"
+  delegate_to: "{{ groups['openvpn_authority'][0] }}"
+  command:
+    cmd: "./easyrsa import-req {{ server_req_fetch_res['dest'] }} server"
+    chdir: "{{ openvpn_ca_pki_path }}"
+    creates: "{{ openvpn_ca_pki_path }}/pki/reqs/server.req"
+
+- name: Sign server request 
+  become: yes
+  become_user: "{{ openvpn_ca_pki_user }}"
+  delegate_to: "{{ groups['openvpn_authority'][0] }}"
+  command:
+    cmd: "./easyrsa sign-req server server"
+    chdir: "{{ openvpn_ca_pki_path }}"
+    creates: "{{ openvpn_ca_pki_path }}/pki/issued/server.crt"
+
+- name: Copy signed certificate
+  copy:
+    src: "{{ openvpn_ca_pki_path }}/pki/issued/server.crt"
+    dest: "{{ openvpn_path }}/server.crt"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Copy CA certificate
+  copy:
+    src: "{{ openvpn_ca_pki_path }}/pki/ca.crt"
+    dest: "{{ openvpn_path }}/ca.crt"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Create a Diffie-Hellman key
+  command:
+    cmd: ./easyrsa gen-dh
+    chdir: "{{ openvpn_pki_path }}"
+    creates: "{{ openvpn_pki_path }}/pki/dh.pem"
+
+- name: Generate a HMAC signature
+  command:
+    cmd: openvpn --genkey --secret ta.key
+    chdir: "{{ openvpn_path }}"
+    creates: "{{ openvpn_path }}/ta.key"
+  
