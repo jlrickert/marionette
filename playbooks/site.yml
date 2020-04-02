@@ -1,6 +1,4 @@
 ---
-- hosts: all
-  become: yes
-  roles:
-    - common
-    - openvpn
+- import_playbook: common.yml
+- import_playbook: openvpn/authority.yml
+- import_playbook: openvpn/server.yml

@@ -1,4 +1,10 @@
 ---
+- name: Install sudo packages
+  when: ansible_os_family == "Debian"
+  apt:
+    name: sudo
+    state: present
+
 - name: Copy sudoers config
   become: yes
   template:

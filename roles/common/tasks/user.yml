@@ -1,4 +1,10 @@
 ---
+- name: Install sudo packages
+  when: ansible_os_family == "Debian"
+  apt:
+    name: zsh
+    state: present
+
 - name: Get zsh shell location
   command: which zsh
   changed_when: no

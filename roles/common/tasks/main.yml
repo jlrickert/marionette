@@ -1,31 +1,24 @@
 ---
 - import_tasks: packages.yml
   tags:
-    - common
     - packages
-
-- import_tasks: user.yml
-  tags:
-    - common
-    - user
-
-- import_tasks: dotfiles.yml
-  tags:
-    - common
-    - user
-    - dotfiles
 
 - import_tasks: sudo.yml
   tags:
-    - common
     - sudo
 
 - import_tasks: hostnames.yml
   tags:
-    - common
     - hostnames
 
 - import_tasks: ssh.yml
   tags:
-    - common
     - ssh
+
+- import_tasks: user.yml
+  tags:
+    - user
+
+- import_tasks: dotfiles.yml
+  tags:
+    - dotfiles

@@ -1,0 +1,9 @@
+---
+- hosts: openvpn_server
+  tasks:
+    - include_role:
+        name: openvpn
+        tasks_from: server
+      tags:
+        - openvpn
+        - server

@@ -1,0 +1,8 @@
+---
+- hosts: all
+  tasks:
+    - name: Load common role
+      import_role:
+        name: common
+      tags:
+        - common
