@@ -1,2 +1,38 @@
 ---
-# tasks file for workstation
+- name: Install i3 packages (Debian)
+  when: ansible_os_family == "Debian"
+  apt:
+    name: [
+      "arandr",
+      "i3",
+      "xsel",
+      "xclip",
+      "rxvt-unicode"
+    ]
+    state: present
+
+- name: Add Syncthing GPG apt Key
+  apt_key:
+    url: https://syncthing.net/release-key.txt
+    state: present
+
+- name: Add Syncthing Repository
+  apt_repository:
+    repo: deb [arch=amd64] http://apt.syncthing.net/ syncthing release
+    state: present
+
+- name: Update apt and install syncthing
+  apt:
+    name: syncthing
+    state: present
+    update_cache: yes
+
+- name: Install External debian packages
+  apt:
+    deb: "{{ item }}"
+    state: present
+  with_items:
+    - "https://download.teamviewer.com/download/linux/teamviewer_amd64.deb"
+    - "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+    - "https://go.microsoft.com/fwlink/?LinkID=760868"
+    - "https://discordapp.com/api/download?platform=linux&format=deb"

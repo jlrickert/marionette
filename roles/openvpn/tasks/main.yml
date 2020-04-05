@@ -1,8 +1,4 @@
 ---
-- import_tasks: install.yml
-  tags:
-    - openvpn
-
 - name: Load authority tasks
   import_tasks: authority.yml
   tags:

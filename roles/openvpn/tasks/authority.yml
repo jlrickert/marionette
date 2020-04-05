@@ -14,7 +14,7 @@
   become: yes
   become_user: "{{ openvpn_ca_pki_user }}"
   run_once: yes
-  unarchive: 
+  unarchive:
     src: https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.7/EasyRSA-3.0.7.tgz
     dest: "{{ openvpn_ca_pki_path }}"
     creates: "{{ openvpn_ca_pki_path }}/easyrsa"
@@ -22,6 +22,8 @@
     extra_opts:
       - "--strip-components"
       - "1"
+    owner: "{{ openvpn_ca_pki_user }}"
+    group: "{{ openvpn_ca_pki_user }}"
   register: easyrsa_download_res
 
 - name: Deploy CA vars configuration
@@ -33,6 +35,8 @@
   template:
     src: easyrsa3_vars.j2
     dest: "{{ openvpn_ca_pki_path }}/vars"
+    owner: "{{ openvpn_ca_pki_user }}"
+    group: "{{ openvpn_ca_pki_user }}"
 
 - name: Initialize CA PKI 
   become: yes

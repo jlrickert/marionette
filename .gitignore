@@ -112,3 +112,4 @@ venv.bak/
 # More Privacy
 inventory.ini
 host_vars
+group_vars

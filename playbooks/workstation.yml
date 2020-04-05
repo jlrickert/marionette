@@ -1,0 +1,14 @@
+---
+- hosts: workstation
+  become: yes
+  tasks:
+    - name: Load workstation role
+      import_role:
+        name: workstation
+      tags:
+        - workstation
+    - name: Load language role
+      import_role:
+        name: language
+      tags:
+        - language

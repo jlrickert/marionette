@@ -1,5 +1,10 @@
 ---
-- name: Ensure java is installed
+- name: install java jre
+  apt:
+    name: default-jdk
+    state: present
+
+- name: Install openjdk
   apt:
     name: default-jdk
     state: present

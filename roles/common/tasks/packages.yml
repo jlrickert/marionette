@@ -3,18 +3,18 @@
   when: ansible_os_family == "Debian"
   apt:
     name: [
-      "aptitude",
       "apt-file",
+      "aptitude",
+      "command-not-found",
+      "curl",
       "fasd",
       "git",
       "htop",
       "lsof",
-      "neovim",
-      "python-neovim",
-      "python3-neovim",
       "silversearcher-ag",
       "ssh",
       "tree",
+      "wget",
       "zsh"
     ]
     state: present

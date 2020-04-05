@@ -4,19 +4,19 @@
     name: apt-transport-https
     state: present
 
-- name: Ensure apt-transport-https is installed.
-  apt:
-    name: apt-transport-https
-    state: present
-
-- import_tasks: node.yml
-  when: nodejs_install
+- import_tasks: nodejs.yml
+  tags:
+    - nodejs
 
 - import_tasks: java.yml
-  when: java_install
+  tags:
+    - java
 
-- import_tasks: scala.yml
-  when: scala_install
+# - import_tasks: scala.yml
+#   tags:
+#     - scala
 
 - import_tasks: python.yml
   when: "python_install and ansible_distribution_release == 'bionic'"
+  tags:
+    - python

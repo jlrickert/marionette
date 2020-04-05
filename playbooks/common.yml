@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  become: yes
   tasks:
     - name: Load common role
       import_role:

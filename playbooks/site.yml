@@ -2,3 +2,4 @@
 - import_playbook: common.yml
 - import_playbook: openvpn/authority.yml
 - import_playbook: openvpn/server.yml
+- import_playbook: workstation.yml
