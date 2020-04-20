@@ -7,8 +7,19 @@
         name: workstation
       tags:
         - workstation
-    - name: Load language role
+
+    - name: Load nodejs language role
       import_role:
         name: language
+        tasks_from: nodejs
       tags:
         - language
+        - nodejs
+
+    - name: Load java language role
+      import_role:
+        name: language
+        tasks_from: java
+      tags:
+        - language
+        - java
