@@ -22,8 +22,7 @@
     state: present
   register: debian_packages
 
-- name: Install additional packages (Debian)
-  when: ansible_os_family == "Debian"
+- name: Install additional packages
   apt:
     name: "{{ common_additional_packages }}"
     state: present

@@ -21,7 +21,7 @@
     repo: deb [arch=amd64] http://apt.syncthing.net/ syncthing release
     state: present
 
-- name: Update apt and install syncthing
+- name: Update apt and install Syncthing
   apt:
     name: syncthing
     state: present
@@ -36,3 +36,4 @@
     - "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
     - "https://go.microsoft.com/fwlink/?LinkID=760868"
     - "https://discordapp.com/api/download?platform=linux&format=deb"
+    - "https://download.notable.md/?target=deb"
