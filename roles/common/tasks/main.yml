@@ -7,9 +7,9 @@
   tags:
     - sudo
 
-- import_tasks: hostnames.yml
-  tags:
-    - hostnames
+# - import_tasks: hostnames.yml
+#   tags:
+#     - hostnames
 
 - import_tasks: ssh.yml
   tags:

@@ -3,7 +3,7 @@
   become: yes
   become_user: root
   apt:
-    deb: https://github.com/twpayne/chezmoi/releases/download/v1.7.17/chezmoi_1.7.17_linux_amd64.deb
+    deb: https://github.com/twpayne/chezmoi/releases/download/v1.8.1/chezmoi_1.8.1_linux_amd64.deb
     state: present
 
 - name: "Installing dotfiles via chezmoi for {{ common_username }}"
