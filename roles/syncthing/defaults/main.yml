@@ -1,0 +1,3 @@
+---
+syncthing_enabled: false
+syncthing_user: "{{ lookup('env', 'USER') | default('jlrickert') }}"

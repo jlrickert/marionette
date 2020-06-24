@@ -8,6 +8,24 @@
       tags:
         - workstation
 
+    # - name: Load syncthing role
+    #   import_role:
+    #     name: syncthing
+    #   vars:
+    #     syncthing_user: "{{ lookup(env, 'USER') | default('jlrickert') }}"
+    #     syncthing_enabled: yes
+    #   tags:
+    #     - syncthing
+    
+    - name: Load docker role
+      vars:
+        docker_users:
+          - "{{ common_username }}"
+      import_role:
+        name: docker
+      tags:
+        - docker
+
     - name: Load nodejs language role
       import_role:
         name: language
