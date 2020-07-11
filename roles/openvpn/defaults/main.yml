@@ -1,5 +1,6 @@
 openvpn_ca_common_name: "Easy-RSA CA"
 openvpn_common_name: "{{ inventory_hostname }}"
+openvpn_server_common_name: "vpn.example.com"
 
 openvpn_key_country: "US"
 openvpn_key_province: "California"
@@ -12,9 +13,5 @@ openvpn_key_size: "2048"
 openvpn_cipher: "AES-256-CBC"
 openvpn_auth_digest: "SHA256"
 
-openvpn_client_user: "root"
-openvpn_client_path: "/etc/openvpn/easyrsa"
-openvpn_ca_server: "{{ groups['openvpn_authority'][0] }}"
-openvpn_ca_pki_user: "root"
-openvpn_ca_pki_path: "/etc/openvpn/easyrsa-ca"
-openvpn_clients: []
+openvpn_ca_pki_user: "{{ lookup('env', 'USER') }}"
+openvpn_ca_pki_root: "~/.local/share/openvpn"

@@ -2,9 +2,10 @@
 - hosts: openvpn_server
   become: yes
   tasks:
-    - include_role:
+    - name: Load OpenVPN Server Role
+      import_role:
         name: openvpn
-        tasks_from: server
+        tasks_from: server.yml
       tags:
         - openvpn
-        - server
+        - openvpn_server

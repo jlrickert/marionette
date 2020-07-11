@@ -1,10 +1,12 @@
 ---
-- hosts: openvpn_authority
+- hosts: 127.0.0.1
+  connection: local
   become: yes
   tasks:
-    - include_role:
+    - name: Load OpenVPN Authority Role
+      import_role:
         name: openvpn
         tasks_from: authority
       tags:
         - openvpn
-        - authority
+        - openvpn_authority
