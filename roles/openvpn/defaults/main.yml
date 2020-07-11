@@ -13,5 +13,6 @@ openvpn_key_size: "2048"
 openvpn_cipher: "AES-256-CBC"
 openvpn_auth_digest: "SHA256"
 
-openvpn_ca_pki_user: "{{ lookup('env', 'USER') }}"
-openvpn_ca_pki_root: "~/.local/share/openvpn"
+openvpn_ca_root: "{{ lookup('env', 'SECRETS') | default('~/secrets') }}/openvpn"
+openvpn_ca_user: "{{ common_username }}"
+openvpn_ca_group: "{{ common_username }}"
