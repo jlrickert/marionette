@@ -1,6 +1,6 @@
 ---
 common_realname: "Admin User"
-common_username: "example"
+common_username: "marionette"
 common_additional_packages:
   - vim-nox
 common_ssh_keys:
@@ -17,5 +17,5 @@ openvpn_key_ou: "My Organizational Unit"
 openvpn_key_email: "me@example.net"
 
 openvpn_ca_root: "{{ lookup('env', 'SECRETS') | default('~') }}/openvpn"
-openvpn_ca_user: "ansible"
-openvpn_ca_group: "ansible"
+openvpn_ca_user: "{{ common_username }}"
+openvpn_ca_group: "{{ common_username }}"
