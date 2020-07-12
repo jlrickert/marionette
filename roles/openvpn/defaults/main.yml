@@ -1,6 +1,6 @@
 openvpn_ca_common_name: "Easy-RSA CA"
 openvpn_common_name: "{{ inventory_hostname }}"
-openvpn_server_common_name: "vpn.example.com"
+openvpn_server_hostname: "vpn.example.com"
 
 openvpn_key_country: "US"
 openvpn_key_province: "California"

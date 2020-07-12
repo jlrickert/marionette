@@ -11,21 +11,12 @@
     ]
     state: present
 
-- name: Add Syncthing GPG apt Key
-  apt_key:
-    url: https://syncthing.net/release-key.txt
-    state: present
-
-- name: Add Syncthing Repository
-  apt_repository:
-    repo: deb [arch=amd64] http://apt.syncthing.net/ syncthing release
-    state: present
-
-- name: Update apt and install Syncthing
-  apt:
+- name: Enable syncthing through firewall
+  ufw:
     name: syncthing
-    state: present
-    update_cache: yes
+    rule: allow
+  tags:
+    - syncthing
 
 - name: Install External debian packages
   apt:

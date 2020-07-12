@@ -22,3 +22,7 @@
 - import_tasks: dotfiles.yml
   tags:
     - dotfiles
+
+- import_tasks: ufw.yml
+  tags:
+    - ufw

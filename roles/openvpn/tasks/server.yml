@@ -10,6 +10,7 @@
     group: root
     mode: "0600"
   register: ca_cert_res
+  notify: restart openvpn@server
 
 - name: Generate server certificates
   become: yes
@@ -17,37 +18,41 @@
   delegate_to: "localhost"
   shell:
     cmd: |
-      ./easyrsa build-server-full {{ openvpn_server_common_name }} nopass inline
-    creates: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server_common_name }}.key"
+      ./easyrsa build-server-full {{ openvpn_server_hostname }} nopass inline
+    creates: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server_hostname }}.key"
     chdir: "{{ openvpn_ca_root }}"
 
 - name: Copy Server key
   become: yes
   copy:
-    src: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server_common_name }}.key"
+    src: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server_hostname }}.key"
     dest: "/etc/openvpn/server.key"
     owner: root
     group: root
     mode: "0600"
+  notify: restart openvpn@server
 
 - name: Copy Signed Server certificate
   become: yes
   copy:
-    src: "{{ openvpn_ca_root }}/pki/issued/{{ openvpn_server_common_name }}.crt"
+    src: "{{ openvpn_ca_root }}/pki/issued/{{ openvpn_server_hostname }}.crt"
     dest: "/etc/openvpn/server.crt"
     owner: root
     group: root
     mode: "0600"
+  notify: restart openvpn@server
 
 - name: Copy dh.pem
   copy:
     src: "{{ openvpn_ca_root }}/pki/dh.pem"
     dest: "/etc/openvpn/dh.pem"
+  notify: restart openvpn@server
 
 - name: Copy ta key from authority
   copy:
     src: "{{ openvpn_ca_root }}/pki/ta.key"
     dest: "/etc/openvpn/ta.key"
+  notify: restart openvpn@server
 
 - name: Deploy server configuration
   template:
@@ -58,191 +63,52 @@
 - name: Enable ipv4 forwarding
   sysctl:
     name: net.ipv4.ip_forward
-    value: '1'
+    value: "1"
     sysctl_set: yes
     state: present
     reload: yes
 
-- name: Enable and Start openvpn server
+- name: Enable ipv6 forwarding
+  sysctl:
+    name: net.ipv6.conf.all.forwarding
+    value: "1"
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Find openvpn device
+  shell: ip route | grep default | awk '{print $5}'
+  register: dev_res
+  changed_when: False
+
+- name: Insert/Update ufw default forward policy
+  lineinfile:
+    path: /etc/default/ufw
+    regexp: "^DEFAULT_FORWARD_POLICY="
+    line: 'DEFAULT_FORWARD_POLICY="ACCEPT"'
+
+- name: Insert/Update post routing rules
+  blockinfile:
+    path: /etc/ufw/before.rules
+    insertbefore: "# Don't delete these required lines, otherwise there will be errors"
+    block: |
+      # START OPENVPN RULES
+      # NAT table rules
+      *nat
+      :POSTROUTING ACCEPT [0:0]
+      # Allow traffic form OpenVPN client to {{ dev_res.stdout }}
+      -A POSTROUTING -s 10.8.0.0/24 -o {{ dev_res.stdout }} -j MASQUERADE
+      COMMIT
+      # END OPENVPN RULES
+
+- name: Accept openvpn traffic
+  ufw:
+    rule: allow
+    proto: udp
+    port: "1194"
+
+- name: Enable and start openvpn server
   service:
     name: openvpn@server
     enabled: yes
     state: started
-
-# - name: Create server certificates
-#   shell: |
-#     ./easyrsa init-pki
-#     ./easyrsa gen-req server nopass
-#     cp ./pki/private/server.key ../server.key
-#   args:
-#     chdir: "/etc/openvpn/easyrsa-server"
-#     creates: "/etc/openvpn/server.key"
-#   register: cert_res
-
-# - name: Create Signature
-#   become: yes
-#   become_user: "{{ openvpn_ca_pki_user }}"
-#   delegate_to: "localhost"
-#   shell:
-#     cmd: |
-#       CHANGED=False
-#       # check if remote file /etc/openvpn/server.crt exists
-#       TMPDIR=/tmp/ansible/{{ inventory_hostname }}
-#       mkdir -p $TMPDIR
-
-#       if [ "{{ cert_res.changed }}" = "True"]; then
-#         rm -f "./pki/reqs/server.req"
-#       fi
-
-#       if [ ! -f "./pki/reqs/server.req" ]; then
-#         REQ=$(ssh {{ inventory_hostname }} "sudo cat /etc/openvpn/easyrsa-server/pki/reqs/server.req")
-#         REQ_FILE=$(mktemp "$TMPDIR/XXXXXXXXXX-server.req")
-#         echo "$REQ" > "$REQ_FILE"
-#         ./easyrsa import-req "$REQ_FILE" server
-#       fi
-
-#       if [ "{{ ca_cert_res.changed }}" = "True" ] || [ "{{ cert_res.changed }}" = "True" ]; then
-#         rm -f "./pki/issued/server.crt"
-#       fi
-
-#       if [ ! -f "./pki/issued/server.crt" ]; then
-#         ./easyrsa sign-req server server
-#       fi
-
-#       CRT=$(cat ./pki/issued/server.crt)
-#       ssh {{ inventory_hostname }} echo "$CRT" | sudo tee "/etc/openvpn/server.crt"
-
-#       rm -r $TMPDIR
-#     creates: /etc/openvpn/server.crt
-#     chdir: "{{ openvpn_ca_pki_root }}/easyrsa-ca"
-#     executable: "/usr/bin/bash"
-#   register: sig_res
-
-# - name: DEBUGGING
-#   debug:
-#     msg: "{{ sig_res }}"
-
-# # - name: Copy CA cert
-# # - name: Fetch CA cert from authority
-# #   become: yes
-# #   become_user: "{{ openvpn_ca_pki_user }}"
-# #   delegate_to: "localhost"
-# #   run_once: yes
-# #   command:
-# #     cmd: /usr/bin/cat ./pki/private/ca.key
-# #     chdir: "{{ openvpn_ca_pki_root }}/easyrsa-ca"
-# #   register: ca_cert_res
-
-# # - set_fact:
-# #     ca_cert: "{{ ca_cert_res.stdout }}"
-# #     cachable: yes
-
-# # - name: Copy Certificate Authority Certificate 
-# #   become: yes
-# #   become_user: "{{ openvpn_ca_pki_user }}"
-# #   delegate_to: "localhost"
-# #   shell: |
-# #     function check {
-# #       ssh sudo {{ inventory_hostname }} cat "/etc/openvpn/ca.crt"
-# #       echo "found"
-# #     }
-# #     # trap finish EXIT
-# #     check
-
-# #     # if [ -f "/etc/openvpn/ca.crt" ]; then
-# #     # fi
-# #     # a=$(md5sum ./pki/private/ca.key)
-# #     # b=md5sum <(ssh {{ inventory_hostname }} sudo cat "/etc/openvpn/ca.crt")
-# #     # if [ "$a" = "$b"]; then
-# #     #   echo "no change"
-# #     # else
-# #     #   echo "changed"
-# #     # fi
-# #   args:
-# #     chdir: "{{ openvpn_ca_pki_root }}/easyrsa-ca"
-# #     executable: "/usr/bin/bash"
-# #   register: ca_res
-
-# # - name: DEBUGGING CA
-# #   debug:
-# #     msg: "{{ ca_cert }}"
-
-# # - name: fetch signed request
-# #   become: yes
-# #   become_user: "{{ openvpn_ca_pki_user }}"
-# #   delegate_to: "localhost"
-# #   shell: |
-# #     req=$(ssh {{ inventory_hostname }} "sudo cat /etc/openvpn/easyrsa-server/pki/reqs/server.req")
-# #     ./easyrsa import_req <(cat <<< "$req") server
-# #     ./easyrsa sign-req server server
-# #     crt=$(cat pki/issued/server.crt)
-# #     ssh {{ inventory_hostname }} sudo tee <(cat <<< "$crt")
-# #   args:
-# #     chdir: "{{ openvpn_ca_pki_root }}/easyrsa-ca"
-# #     creates: /etc/openvpn/server.crt
-# #   register: signature_res
-# #   when: ca_res.stdout == "changed"
-
-# # - name: DEBBUGING SIG
-# #   debug:
-# #     msg: "{{ signature_res }}"
-
-# # - name: Initialize server PKI
-# #   command:
-# #     cmd: ./easyrsa init-pki
-# #     chdir: "/etc/openvpn/easyrsa-server"
-# #     creates: "/etc/openvpn/easyrsa-server/pki/private"
-# #   when: "{{ ca_res.failed or ca_res.}}"
-
-# # - name: Create request cert for server
-# #   command:
-# #     cmd: ./easyrsa gen-req server nopass
-# #     chdir: "/etc/openvpn/easyrsa-server"
-# #     creates: "/etc/openvpn/easyrsa-server/pki/private/server.key"
-
-# # - name: Copy server key
-# #   copy:
-# #     src: "/etc/openvpn/easyrsa-server/pki/private/server.key"
-# #     dest: "/etc/openvpn/server.key"
-# #     remote_src: yes
-
-# # - name: Fetch server request certificate
-# #   fetch:
-# #     src: "/etc/openvpn/easyrsa-server/pki/reqs/server.req"
-# #     dest: "/tmp/prefix-{{ inventory_hostname }}/"
-# #     flat: yes
-# #   register: server_req_fetch_res
-
-# # - name: Import server request
-# #   become: yes
-# #   become_user: "{{ openvpn_ca_pki_user }}"
-# #   delegate_to: "localhost"
-# #   command:
-# #     cmd: "./easyrsa import-req {{ server_req_fetch_res['dest'] }} server"
-# #     chdir: "{{ openvpn_ca_pki_root }}/easyrsa-ca"
-# #     creates: "{{ openvpn_ca_pki_root }}/easyrsa-ca/pki/reqs/server.req"
-
-# # - name: Sign server request 
-# #   become: yes
-# #   become_user: "{{ openvpn_ca_pki_user }}"
-# #   delegate_to: "localhost"
-# #   command:
-# #     cmd: "./easyrsa sign-req server server"
-# #     chdir: "{{ openvpn_ca_pki_root }}/easyrsa-ca"
-# #     creates: "{{ openvpn_ca_pki_root }}/easyrsa-ca/pki/issued/server.crt"
-
-# # - name: Copy signed certificate
-# #   copy:
-# #     src: "{{ openvpn_ca_pki_root }}/easyrsa-ca/pki/issued/server.crt"
-# #     dest: "/etc/openvpn/server.crt"
-# #     owner: root
-# #     group: root
-# #     mode: "0600"
-
-# # - name: Copy CA certificate
-# #   copy:
-# #     src: "{{ openvpn_ca_pki_root }}/easyrsa-ca/pki/ca.crt"
-# #     dest: "/etc/openvpn/ca.crt"
-# #     owner: root
-# #     group: root
-# #     mode: "0600"

@@ -2,20 +2,17 @@
 - name: Load authority tasks
   import_tasks: authority.yml
   tags:
-    - openvpn
     - authority
   when: "'openvpn_authority' in group_names"
 
 - name: Load server tasks
   import_tasks: server.yml
   tags:
-    - openvpn
     - server
   when: "'openvpn_server' in group_names"
 
 - name: Load client tasks
   import_tasks: client.yml
   tags:
-    - openvpn
     - client
   when: "'openvpn_client' in group_names"

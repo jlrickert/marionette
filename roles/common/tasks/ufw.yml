@@ -1,0 +1,36 @@
+---
+- name: Install ufw
+  apt:
+    name: ["ufw"]
+    state: present
+
+- name: Enable ufw
+  ufw:
+    state: enabled
+
+- name: Deny incoming traffic by default
+  ufw:
+    default: deny
+    direction: incoming
+
+- name: Allow outgoing traffic by default
+  ufw:
+    default: allow
+    direction: outgoing
+
+- name: Deny routed traffic by default
+  ufw:
+    default: deny
+    direction: routed
+
+- name: Enable OpenSSH through firewall
+  ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+
+- name: Enable and start UFW
+  service:
+    name: ufw.service
+    enabled: yes
+    state: started

@@ -7,7 +7,7 @@ common_ssh_keys:
   - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0TsLF3yUCDfs0g+2GVqb1M5jFsUG99otKjKZ6kRYXkqRyDMntmrjz+5OpwP0pS1k27sEZ5EbASxN7+HwZxGB2QviD4Y7EwcZJHZR71OZXqd6bvm6scTC9SBOqWApThSJpJ4AYmRVpPGBFUX9ihTmOgTX1M4PsQt8PN5MMgpUxv/6/EyA1ioI50XJyOScX5XB8umQ/yduxXSJGItebxp2V9D0iCcefhWa0dWMGA8RS/i5sHN1L5K9RFLRMg1fag9M42sR6B9ZhhuCoLhpCJ1Uk6jbS6u6UZ7a4yzm+x3vHoHDUg+GjHtYtyDEYzjrxVqWGlCqj7IHtKTmFsLgDniQJ admin@jlrickert.me-2017-05-15"
 
 openvpn_ca_common_name: "Root CA"
-openvpn_server_common_name: "vpn.example.com"
+openvpn_server_hostname: "vpn.example.com"
 
 openvpn_key_country: "US"
 openvpn_key_province: "California"

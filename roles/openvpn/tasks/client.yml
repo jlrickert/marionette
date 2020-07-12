@@ -1,36 +1,79 @@
 ---
-- name: Install Openvpn
-  apt:
-    name: openvpn
-    state: present
+- name: Import OpenVPN install Role
+  import_tasks: install.yml
 
-# - name: "Create {{ openvpn_pki_path }}"
-#   become: yes
-#   become_user: "{{ openvpn_pki_user }}"
-#   file:
-#     path: "{{ openvpn_pki_path }}"
-#     state: directory
-#     mode: 0755
-#     owner: "{{ openvpn_pki_user }}"
-#     group: "{{ openvpn_pki_user }}"
+- name: "Create {{ openvpn_ca_root }}/clients directory"
+  file:
+    path: "{{ openvpn_ca_root }}/clients"
+    state: directory
+    mode: "0755"
+    owner: "{{ openvpn_ca_user }}"
+    group: "{{ openvpn_ca_group }}"
 
-# - name: Download EasyRSA
-#   become: yes
-#   become_user: "{{ openvpn_pki_user }}"
-#   unarchive: 
-#     src: https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.7/EasyRSA-3.0.7.tgz
-#     dest: "{{ openvpn_pki_path }}"
-#     creates: "{{ openvpn_pki_path }}/easyrsa"
-#     remote_src: yes
-#     extra_opts:
-#       - "--strip-components"
-#       - "1"
-#   register: easyrsa_download_res
+- name: Find bash executable
+  command: which bash
+  changed_when: False
+  register: bash_exe_res
 
-# - name: Deploy vars configuration
-#   become: yes
-#   become_user: "{{ openvpn_pki_user }}"
-#   template:
-#     src: easyrsa3_vars.j2
-#     dest: "{{ openvpn_pki_path }}/vars"
+- name: Deploy base client configuration file
+  become: yes
+  become_user: "{{ openvpn_ca_user }}"
+  delegate_to: "localhost"
+  run_once: yes
+  template:
+    src: client.conf.j2
+    dest:  "{{ openvpn_ca_root }}/base-client.conf"
+    owner: "{{ openvpn_ca_user }}"
+    group: "{{ openvpn_ca_group }}"
+  register: base_client_res
+  notify: restart openvpn@client
 
+- name: Generate client files
+  become: yes
+  become_user: "{{ openvpn_ca_user }}"
+  delegate_to: "localhost"
+  shell:
+    cmd: |
+      function create_opvn_file() {
+        CONFIG={{ lookup('template', 'client.conf.j2') | quote }}
+
+        cat base-client.conf \
+          <(echo -e '<ca>') \
+          pki/ca.crt \
+          <(echo -e '</ca>\n\n<cert>') \
+          pki/issued/{{ openvpn_common_name }}.crt \
+          <(echo -e '</cert>\n\n<key>') \
+          pki/private/{{ openvpn_common_name }}.key \
+          <(echo -e '</key>\n\n<tls-auth>') \
+          pki/ta.key \
+          <(echo -e '</tls-auth>') \
+          > clients/{{ openvpn_common_name }}.opvn
+        echo changed
+      }
+
+      if [ ! -f "./pki/reqs/{{ openvpn_common_name }}.req" ]; then
+        ./easyrsa build-client-full {{ openvpn_common_name }} nopass inline
+      fi
+
+      if [ ! -f "./clients/{{ openvpn_common_name }}.opvn" ] || [ "{{ base_client_res.changed }}" = "True" ]; then
+        create_opvn_file
+      fi
+    executable: "{{ bash_exe_res.stdout }}"
+    chdir: "{{ openvpn_ca_root }}"
+  register: client_res
+  changed_when: "'changed' in client_res.stdout"
+
+- name: Copy client opvn file
+  copy:
+    src: "{{ openvpn_ca_root }}/clients/{{ openvpn_common_name }}.opvn"
+    dest: "/etc/openvpn/client.conf"
+    owner: root
+    group: root
+    mode: "0600"
+  notify: restart openvpn@client
+
+- name: Enable and start openvpn client
+  service:
+    name: openvpn@client
+    enabled: yes
+    state: started
