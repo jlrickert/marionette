@@ -5,3 +5,8 @@
   service:
     name: sshd.service
     state: restarted
+
+- name: restart ufw
+  service:
+    name: ufw.service
+    state: restarted

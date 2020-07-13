@@ -1,3 +1,4 @@
+# {{ ansible_managed }}
 # Easy-RSA 3 parameter settings
 
 # NOTE: If you installed Easy-RSA from your distro's package manager, don't edit
@@ -81,7 +82,7 @@ set_var EASYRSA_DN "org"
 # you may omit any specific field by typing the "." symbol (not valid for
 # email.)
 
-set_var EASYRSA_REQ_COUNTRY  "{{ openvpn_key_country }}"
+set_var EASYRSA_REQ_COUNTRY "{{ openvpn_key_country }}"
 set_var EASYRSA_REQ_PROVINCE "{{ openvpn_key_province }}"
 set_var EASYRSA_REQ_CITY "{{ openvpn_key_city }}"
 set_var EASYRSA_REQ_ORG  "{{ openvpn_key_org }}"
@@ -183,7 +184,7 @@ set_var EASYRSA_KEY_SIZE 2048
 # This is best left alone. Interactively you will set this manually, and BATCH
 # callers are expected to set this themselves.
 
-set_var EASYRSA_REQ_CN   "{{ openvpn_common_name }}"
+set_var EASYRSA_REQ_CN   "{{ openvpn_ca_common_name }}"
 
 # Cryptographic digest to use.
 # Do not change this default unless you understand the security implications.

@@ -1,0 +1,11 @@
+---
+# handlers file for core
+- name: restart openvpn@server
+  service:
+    name: openvpn@server
+    state: restarted
+
+- name: restart openvpn@client
+  service:
+    name: openvpn@client
+    state: restarted

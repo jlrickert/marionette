@@ -1,57 +1,67 @@
 ---
-- name: "Create {{ openvpn_ca_pki_path }} for ca"
-  become: yes
-  become_user: "{{ openvpn_ca_pki_user }}"
-  run_once: yes
-  file:
-    path: "{{ openvpn_ca_pki_path }}"
-    state: directory
-    mode: 0755
-    owner: "{{ openvpn_ca_pki_user }}"
-    group: "{{ openvpn_ca_pki_user }}"
+- name: Import OpenVPN install Role
+  import_tasks: install.yml
 
-- name: Download EasyRSA for ca
-  become: yes
-  become_user: "{{ openvpn_ca_pki_user }}"
-  run_once: yes
+- name: "Create {{ openvpn_ca_root }} directory"
+  file:
+    path: "{{ openvpn_ca_root }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ openvpn_ca_user }}"
+    group: "{{ openvpn_ca_group }}"
+
+- name: Download EasyRSA
   unarchive:
     src: https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.7/EasyRSA-3.0.7.tgz
-    dest: "{{ openvpn_ca_pki_path }}"
-    creates: "{{ openvpn_ca_pki_path }}/easyrsa"
+    dest: "{{ openvpn_ca_root }}"
+    creates: "{{ openvpn_ca_root }}/easyrsa"
     remote_src: yes
     extra_opts:
       - "--strip-components"
       - "1"
-    owner: "{{ openvpn_ca_pki_user }}"
-    group: "{{ openvpn_ca_pki_user }}"
-  register: easyrsa_download_res
+    owner: "{{ openvpn_ca_user }}"
+    group: "{{ openvpn_ca_group }}"
 
-- name: Deploy CA vars configuration
-  become: yes
-  become_user: "{{ openvpn_ca_pki_user }}"
-  run_once: yes
-  vars:
-    openvpn_common_name: "{{ openvpn_ca_common_name }}"
+- name: Deploy vars configuration
   template:
     src: easyrsa3_vars.j2
-    dest: "{{ openvpn_ca_pki_path }}/vars"
-    owner: "{{ openvpn_ca_pki_user }}"
-    group: "{{ openvpn_ca_pki_user }}"
+    dest:  "{{ openvpn_ca_root }}/vars"
+    owner: "{{ openvpn_ca_user }}"
+    group: "{{ openvpn_ca_group }}"
+  register: easyrsa_var_res
 
-- name: Initialize CA PKI 
+- name: Build CA Certificate
   become: yes
-  become_user: "{{ openvpn_ca_pki_user }}"
-  run_once: yes
+  become_user: "{{ openvpn_ca_user }}"
+  shell: |
+    if [ "{{ easyrsa_var_res.changed }}" = "True" ] || [ ! -f "./pki/private/ca.key" ]; then
+      ./easyrsa init-pki
+      ./easyrsa build-ca nopass
+      echo -n changed
+    fi
+  args:
+    chdir: "{{ openvpn_ca_root }}"
+  register: ca_res
+  changed_when: "'changed' in ca_res.stdout"
+
+- name: "Create a Diffie-Hellman key"
+  become: yes
+  become_user: "{{ openvpn_ca_user }}"
   command:
-    cmd: ./easyrsa init-pki
-    chdir: "{{ openvpn_ca_pki_path }}"
-    creates: "{{ openvpn_ca_pki_path }}/pki/private"
+    cmd: ./easyrsa gen-dh
+    chdir: "{{ openvpn_ca_root }}"
+    creates: "{{ openvpn_ca_root }}/pki/dh.pem"
+  register: dh_res
 
-- name: Build CA
+- name: Find openvpn executable
+  command: which openvpn
+  changed_when: False
+  register: openvpn_exe_res
+
+- name: Generate a HMAC signature
   become: yes
-  become_user: "{{ openvpn_ca_pki_user }}"
-  run_once: yes
-  command: 
-    cmd: ./easyrsa build-ca nopass
-    chdir: "{{ openvpn_ca_pki_path }}"
-    creates: "{{ openvpn_ca_pki_path }}/pki/private/ca.key"
+  become_user: "{{ openvpn_ca_user }}"
+  command:
+    cmd: "{{ openvpn_exe_res.stdout }} --genkey --secret pki/ta.key"
+    chdir: "{{ openvpn_ca_root }}"
+    creates: "{{ openvpn_ca_root }}/pki/ta.key"

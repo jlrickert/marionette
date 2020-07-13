@@ -1,0 +1,11 @@
+---
+- hosts: openvpn_client
+  become: yes
+  tasks:
+    - name: Load OpenVPN Client Role
+      import_role:
+        name: openvpn
+        tasks_from: client.yml
+      tags:
+        - openvpn
+        - openvpn_client

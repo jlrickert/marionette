@@ -1,0 +1,4 @@
+---
+- import_playbook: authority.yml
+- import_playbook: server.yml
+- import_playbook: client.yml

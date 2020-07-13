@@ -1,22 +1,17 @@
 [webservers]
-www.yourdomain.com
+deb1.yourdomain.com
+deb2.yourdomain.com
 
 [openvpn_server]
-vpn.yourdomain.com
-korvos.jlrickert.local
-
-[openvpn_authority]
-ca.yourdomain.com
+deb3.yourdomain.com
 
 [openvpn_client]
-www.yourdomain.com
 desktop.yourdomain.local
 laptop.yourdomain.local
 
 [devops]
-devops.yourdomain.local
+deb4.yourdomain.local
 
 [workstation]
 desktop.yourdomain.local
 laptop.yourdomain.local
-
