@@ -1,0 +1,6 @@
+---
+- name: Install golang packages
+  apt:
+    name: [
+      "golang-go"
+    ]

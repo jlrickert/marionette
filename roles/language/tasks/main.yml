@@ -20,3 +20,7 @@
   when: "python_install and ansible_distribution_release == 'bionic'"
   tags:
     - python
+
+- import_tasks: golang.yml
+  tags:
+    - golang

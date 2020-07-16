@@ -16,7 +16,7 @@
     #     syncthing_enabled: yes
     #   tags:
     #     - syncthing
-    
+
     - name: Load docker role
       vars:
         docker_users:
@@ -41,3 +41,11 @@
       tags:
         - language
         - java
+
+    - name: Load golang language role
+      import_role:
+        name: language
+        tasks_from: golang
+      tags:
+        - language
+        - golang
