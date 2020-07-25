@@ -5,6 +5,7 @@
       'apt-transport-https',
       'ca-certificates',
       'curl',
+      'docker-compose',
       'gnupg-agent',
       'software-properties-common',
     ]
