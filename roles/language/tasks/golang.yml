@@ -1,6 +1,52 @@
 ---
-- name: Install golang packages
-  apt:
-    name: [
-      "golang-go"
-    ]
+- name: Download Go tarball
+  become: yes
+  get_url:
+    url: "https://golang.org/dl/{{ go_tarball }}"
+    dest: /usr/local/src/go-1.14.6.tar.gz
+    checksum: "{{ go_checksum }}"
+
+- name: Register current Go version (if any)
+  command: /usr/local/share/go/bin/go version
+  ignore_errors: yes
+  register: go_version
+  changed_when: false
+
+- name: Remove old installation of go
+  become: yes
+  file:
+    path: /usr/local/share/go
+    state: absent
+  when: go_version is failed or go_version.stdout != go_version_check
+
+- name: Create go root directory
+  become: yes
+  file:
+    path: /usr/local/share/go
+    state: directory
+
+- name: Extract Go tarball
+  become: yes
+  unarchive:
+    src: "/usr/local/src/{{ go_tarball }}"
+    dest: /usr/local/share
+    copy: no
+  when: go_version is failed or go_version.stdout != go_version_check
+
+- name: Set default golang variables for all users
+  copy:
+    src: golang.sh
+    dest: /etc/profile.d/golang.sh
+
+- name: Create /usr/local/bin directory
+  become: yes
+  file:
+    path: /usr/local/bin
+    state: directory
+
+- name: Link go binary to /usr/local/bin
+  become: yes
+  file:
+    src: /usr/local/share/go/bin/go
+    dest: /usr/local/bin/go
+    state: link
