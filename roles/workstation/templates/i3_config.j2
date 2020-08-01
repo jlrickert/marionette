@@ -1,3 +1,5 @@
+# {{ ansible_managed }}
+
 #################################################
 # General Config
 ##################################################
@@ -221,7 +223,7 @@ bindsym XF86AudioPrev exec playerctl previous
 bar {
       font pango:DejaVu Sans Mono, FontAwesome 10
       position bottom
-      status_command i3status ~/.config/i3status/config
+      status_command i3status {{ config_dir }}/i3status/config
       tray_output primary
       colors {
              background $base02
@@ -232,4 +234,3 @@ bar {
              separator #666666
       }
 }
-

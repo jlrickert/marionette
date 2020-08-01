@@ -4,5 +4,3 @@ common_realname: "Admin user"
 common_username: "marionette"
 common_additional_packages: []
 common_ssh_keys: []
-common_domain_name: "example.com"
-common_local_domain_name: "example.local"

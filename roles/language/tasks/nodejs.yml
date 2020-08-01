@@ -1,6 +1,5 @@
 ---
 - name: "Get environmental variables for {{ common_username }}"
-
   become: yes
   become_user: "{{ common_username }}"
   command: "ssh {{ inventory_hostname | quote }} echo $NVM_DIR"
@@ -17,7 +16,7 @@
   register: nvm_repo_tag_res
 
 - name: "Query nvm tag information for latest version"
-  set_fact: 
+  set_fact:
     nodejs_nvm_version: "{{ nvm_repo_tag_res.json | map(attribute='name') | list | first }}"
 
 - name: Install nvm

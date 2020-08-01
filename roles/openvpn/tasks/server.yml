@@ -18,14 +18,14 @@
   delegate_to: "localhost"
   shell:
     cmd: |
-      ./easyrsa build-server-full {{ openvpn_server_hostname }} nopass inline
-    creates: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server_hostname }}.key"
+      ./easyrsa build-server-full {{ openvpn_server }} nopass inline
+    creates: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server }}.key"
     chdir: "{{ openvpn_ca_root }}"
 
 - name: Copy Server key
   become: yes
   copy:
-    src: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server_hostname }}.key"
+    src: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server }}.key"
     dest: "/etc/openvpn/server.key"
     owner: root
     group: root
@@ -35,7 +35,7 @@
 - name: Copy Signed Server certificate
   become: yes
   copy:
-    src: "{{ openvpn_ca_root }}/pki/issued/{{ openvpn_server_hostname }}.crt"
+    src: "{{ openvpn_ca_root }}/pki/issued/{{ openvpn_server }}.crt"
     dest: "/etc/openvpn/server.crt"
     owner: root
     group: root
@@ -81,6 +81,11 @@
   register: dev_res
   changed_when: False
 
+- name: Allow routed traffic
+  ufw:
+    rule: allow
+    route: yes
+
 - name: Insert/Update ufw default forward policy
   lineinfile:
     path: /etc/default/ufw
@@ -101,7 +106,7 @@
       COMMIT
       # END OPENVPN RULES
 
-- name: Accept openvpn traffic
+- name: Allow openvpn traffic
   ufw:
     rule: allow
     proto: udp

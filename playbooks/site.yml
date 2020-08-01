@@ -1,5 +1,5 @@
 ---
-- import_playbook: common/site.yml
-- import_playbook: openvpn/site.yml
-# - import_playbook: workstation.yml
-# - import_playbook: devops.yml
+- import_playbook: common.yml
+- import_playbook: dotfiles.yml
+# - import_playbook: openvpn/site.yml
+- import_playbook: workstation.yml

@@ -1,0 +1,8 @@
+---
+workstation_user: "{{ lookup('env', 'USER')|default('marionette') }}"
+data_dir: "{{ lookup('env', 'XDG_DATA_HOME')|default('~/.local/share') }}"
+config_dir: "{{ lookup('env', 'XDG_CONFIG_HOME')|default('~/.config') }}"
+cache_dir: "{{ lookup('env', 'XDG_CACHE_HOME')|default('~/.cache') }}"
+wireless_devices: []
+ethernet_devices: []
+battery_devices: []

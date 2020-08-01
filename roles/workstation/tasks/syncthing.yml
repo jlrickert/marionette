@@ -15,10 +15,16 @@
     state: present
     update_cache: yes
 
-- name: "Enable syncthing for user {{ syncthing_user }} "
-  when: syncthing_enabled
+- name: "Enable syncthing for user {{ workstation_user }}"
   systemd:
-    name: syncthing@{{ syncthing_user }}
+    name: syncthing@{{ workstation_user }}
     state: started
     daemon_reload: yes
     enabled: yes
+
+- name: Enable syncthing through firewall
+  ufw:
+    name: syncthing
+    rule: allow
+  tags:
+    - syncthing

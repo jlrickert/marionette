@@ -109,7 +109,10 @@ venv.bak/
 # ansible
 *.retry
 
+tmp/
+
 # More Privacy
 inventory.ini
+inventory.yml
 host_vars
 group_vars

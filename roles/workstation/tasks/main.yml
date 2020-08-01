@@ -1,22 +1,11 @@
 ---
-- name: Install i3 packages (Debian)
-  when: ansible_os_family == "Debian"
-  apt:
-    name: [
-      "arandr",
-      "i3",
-      "xsel",
-      "xclip",
-      "rxvt-unicode"
-    ]
-    state: present
-
-- name: Enable syncthing through firewall
-  ufw:
-    name: syncthing
-    rule: allow
+- import_tasks: i3.yml
   tags:
-    - syncthing
+    i3
+
+- import_tasks: syncthing.yml
+  tags:
+    syncthing
 
 - name: Install External debian packages
   apt:
@@ -27,4 +16,13 @@
     - "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
     - "https://go.microsoft.com/fwlink/?LinkID=760868"
     - "https://discordapp.com/api/download?platform=linux&format=deb"
-    - "https://download.notable.md/?target=deb"
+
+# - name: Copy ssh private keys (workstation only)
+#   become: yes
+#   become_user: "{{ workstation_user }}"
+#   copy:
+#     src: "{{ item }}"
+#     dest: "{{ item }}"
+#   loop:
+#     - "~/.ssh/id_rsa"
+#     - "~/.ssh/id_rsa.pub"

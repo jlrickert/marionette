@@ -4,8 +4,10 @@
   service:
     name: openvpn@server
     state: restarted
+  when: restart_openvpn
 
 - name: restart openvpn@client
   service:
     name: openvpn@client
     state: restarted
+  when: restart_openvpn

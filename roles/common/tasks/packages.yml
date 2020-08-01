@@ -3,6 +3,7 @@
   when: ansible_os_family == "Debian"
   apt:
     name: [
+      "ansible",
       "apt-file",
       "aptitude",
       "command-not-found",
@@ -14,6 +15,8 @@
       "httpie",
       "lsof",
       "nmap",
+      "python-apt",
+      "python3-apt",
       "silversearcher-ag",
       "ssh",
       "tree",
@@ -21,7 +24,6 @@
       "zsh"
     ]
     state: present
-  register: debian_packages
 
 - name: Install additional packages
   apt:

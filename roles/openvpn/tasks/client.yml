@@ -3,6 +3,10 @@
   import_tasks: install.yml
 
 - name: "Create {{ openvpn_ca_root }}/clients directory"
+  become: yes
+  become_user: "{{ openvpn_ca_user }}"
+  delegate_to: "localhost"
+  run_once: yes
   file:
     path: "{{ openvpn_ca_root }}/clients"
     state: directory
@@ -13,7 +17,7 @@
 - name: Find bash executable
   command: which bash
   changed_when: False
-  register: bash_exe_res
+  register: bash_exe
 
 - name: Deploy base client configuration file
   become: yes
@@ -58,7 +62,7 @@
       if [ ! -f "./clients/{{ openvpn_common_name }}.opvn" ] || [ "{{ base_client_res.changed }}" = "True" ]; then
         create_opvn_file
       fi
-    executable: "{{ bash_exe_res.stdout }}"
+    executable: "{{ bash_exe.stdout }}"
     chdir: "{{ openvpn_ca_root }}"
   register: client_res
   changed_when: "'changed' in client_res.stdout"

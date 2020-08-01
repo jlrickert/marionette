@@ -18,11 +18,6 @@
     default: allow
     direction: outgoing
 
-- name: Deny routed traffic by default
-  ufw:
-    default: deny
-    direction: routed
-
 - name: Enable OpenSSH through firewall
   ufw:
     rule: limit
