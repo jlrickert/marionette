@@ -2,12 +2,12 @@
 # handlers file for core
 - name: restart openvpn@server
   service:
-    name: openvpn@server
-    state: restarted
+      name: openvpn@server
+      state: restarted
   when: restart_openvpn
 
 - name: restart openvpn@client
   service:
-    name: openvpn@client
-    state: restarted
+      name: openvpn@client
+      state: restarted
   when: restart_openvpn

@@ -1,28 +1,45 @@
 ---
-- name: "Get environmental variables for {{ common_username }}"
+- name: Get bash shell location
+  command: which bash
+  changed_when: no
+  failed_when: bash_path_res.rc != 0
+  register: bash_path_res
+
+- name: "Get environmental variables for {{ username }}"
   become: yes
-  become_user: "{{ common_username }}"
+  become_user: "{{ username }}"
   command: "ssh {{ inventory_hostname | quote }} echo $NVM_DIR"
   delegate_to: localhost
   changed_when: false
   register: nvm_dir_res
 
+- name: "Query nvm install directory"
+  set_fact:
+      nodejs_nvm_dir: "{{ nvm_dir_res.stdout | default('~/.nvm') }}"
+
 - name: Fetch nvm tag information
   uri:
-    url: https://api.github.com/repos/nvm-sh/nvm/tags
-    headers:
-      Accept: "application/vnd.github.v3+json"
-    return_content: yes
+      url: https://api.github.com/repos/nvm-sh/nvm/tags
+      headers:
+          Accept: "application/vnd.github.v3+json"
+      return_content: yes
   register: nvm_repo_tag_res
 
 - name: "Query nvm tag information for latest version"
   set_fact:
-    nodejs_nvm_version: "{{ nvm_repo_tag_res.json | map(attribute='name') | list | first }}"
+      nodejs_nvm_version: "{{ nvm_repo_tag_res.json | map(attribute='name') | list | first }}"
 
 - name: Install nvm
   become: yes
-  become_user: "{{ common_username }}"
+  become_user: "{{ username }}"
   git:
-    repo: https://github.com/nvm-sh/nvm.git   
-    dest: "{{ nvm_dir_res.stdout | default('~/.nvm') }}"
-    version: "{{ nodejs_nvm_version }}"
+      repo: https://github.com/nvm-sh/nvm.git
+      dest: "{{ nodejs_nvm_dir }}"
+      version: "{{ nodejs_nvm_version }}"
+
+- name: install most stable node version
+  become: yes
+  become_user: "{{ username }}"
+  shell:
+      cmd: "source {{ nodejs_nvm_dir}}/nvm.sh && nvm install stable"
+      executable: "{{ bash_path_res.stdout }}"

@@ -1,31 +1,52 @@
 ---
+- name: Enable non free software
+  template:
+      src: sources.list.j2
+      dest: /etc/apt/sources.list
+      owner: root
+      group: root
+      mode: "0644"
+  register: source_list
+  when: ansible_os_family == "Debian"
+
+- name: Update repository
+  apt:
+      update_cache: yes
+  when: source_list.changed
+
 - name: Install packages (Debian)
   when: ansible_os_family == "Debian"
   apt:
-    name: [
-      "ansible",
-      "apt-file",
-      "aptitude",
-      "command-not-found",
-      "curl",
-      "dnsutils",
-      "fasd",
-      "git",
-      "htop",
-      "httpie",
-      "lsof",
-      "nmap",
-      "python-apt",
-      "python3-apt",
-      "silversearcher-ag",
-      "ssh",
-      "tree",
-      "wget",
-      "zsh"
-    ]
-    state: present
+      name:
+          [
+              "ansible",
+              "apt-file",
+              "aptitude",
+              "command-not-found",
+              "curl",
+              "dnsutils",
+              "fasd",
+              "git",
+              "htop",
+              "httpie",
+              "lsof",
+              "nmap",
+              "python-apt",
+              "python3-apt",
+              "silversearcher-ag",
+              "ssh",
+              "tree",
+              "wget",
+              "zsh",
+          ]
+      state: present
 
-- name: Install additional packages
+- name: Install additional group packages
   apt:
-    name: "{{ common_additional_packages }}"
-    state: present
+      name: "{{ group_packages }}"
+      state: present
+
+- name: Install additional host packages
+  apt:
+      name: "{{ host_packages }}"
+      state: present

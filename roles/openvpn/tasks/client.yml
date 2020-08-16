@@ -8,11 +8,11 @@
   delegate_to: "localhost"
   run_once: yes
   file:
-    path: "{{ openvpn_ca_root }}/clients"
-    state: directory
-    mode: "0755"
-    owner: "{{ openvpn_ca_user }}"
-    group: "{{ openvpn_ca_group }}"
+      path: "{{ openvpn_ca_root }}/clients"
+      state: directory
+      mode: "0755"
+      owner: "{{ openvpn_ca_user }}"
+      group: "{{ openvpn_ca_group }}"
 
 - name: Find bash executable
   command: which bash
@@ -25,10 +25,10 @@
   delegate_to: "localhost"
   run_once: yes
   template:
-    src: client.conf.j2
-    dest:  "{{ openvpn_ca_root }}/base-client.conf"
-    owner: "{{ openvpn_ca_user }}"
-    group: "{{ openvpn_ca_group }}"
+      src: client.conf.j2
+      dest: "{{ openvpn_ca_root }}/base-client.conf"
+      owner: "{{ openvpn_ca_user }}"
+      group: "{{ openvpn_ca_group }}"
   register: base_client_res
   notify: restart openvpn@client
 
@@ -37,47 +37,47 @@
   become_user: "{{ openvpn_ca_user }}"
   delegate_to: "localhost"
   shell:
-    cmd: |
-      function create_opvn_file() {
-        CONFIG={{ lookup('template', 'client.conf.j2') | quote }}
+      cmd: |
+          function create_opvn_file() {
+            CONFIG={{ lookup('template', 'client.conf.j2') | quote }}
 
-        cat base-client.conf \
-          <(echo -e '<ca>') \
-          pki/ca.crt \
-          <(echo -e '</ca>\n\n<cert>') \
-          pki/issued/{{ openvpn_common_name }}.crt \
-          <(echo -e '</cert>\n\n<key>') \
-          pki/private/{{ openvpn_common_name }}.key \
-          <(echo -e '</key>\n\n<tls-auth>') \
-          pki/ta.key \
-          <(echo -e '</tls-auth>') \
-          > clients/{{ openvpn_common_name }}.opvn
-        echo changed
-      }
+            cat base-client.conf \
+              <(echo -e '<ca>') \
+              pki/ca.crt \
+              <(echo -e '</ca>\n\n<cert>') \
+              pki/issued/{{ openvpn_common_name }}.crt \
+              <(echo -e '</cert>\n\n<key>') \
+              pki/private/{{ openvpn_common_name }}.key \
+              <(echo -e '</key>\n\n<tls-auth>') \
+              pki/ta.key \
+              <(echo -e '</tls-auth>') \
+              > clients/{{ openvpn_common_name }}.opvn
+            echo changed
+          }
 
-      if [ ! -f "./pki/reqs/{{ openvpn_common_name }}.req" ]; then
-        ./easyrsa build-client-full {{ openvpn_common_name }} nopass inline
-      fi
+          if [ ! -f "./pki/reqs/{{ openvpn_common_name }}.req" ]; then
+            ./easyrsa build-client-full {{ openvpn_common_name }} nopass inline
+          fi
 
-      if [ ! -f "./clients/{{ openvpn_common_name }}.opvn" ] || [ "{{ base_client_res.changed }}" = "True" ]; then
-        create_opvn_file
-      fi
-    executable: "{{ bash_exe.stdout }}"
-    chdir: "{{ openvpn_ca_root }}"
+          if [ ! -f "./clients/{{ openvpn_common_name }}.opvn" ] || [ "{{ base_client_res.changed }}" = "True" ]; then
+            create_opvn_file
+          fi
+      executable: "{{ bash_exe.stdout }}"
+      chdir: "{{ openvpn_ca_root }}"
   register: client_res
   changed_when: "'changed' in client_res.stdout"
 
 - name: Copy client opvn file
   copy:
-    src: "{{ openvpn_ca_root }}/clients/{{ openvpn_common_name }}.opvn"
-    dest: "/etc/openvpn/client.conf"
-    owner: root
-    group: root
-    mode: "0600"
+      src: "{{ openvpn_ca_root }}/clients/{{ openvpn_common_name }}.opvn"
+      dest: "/etc/openvpn/client.conf"
+      owner: root
+      group: root
+      mode: "0600"
   notify: restart openvpn@client
 
 - name: Enable and start openvpn client
   service:
-    name: openvpn@client
-    enabled: yes
-    state: started
+      name: openvpn@client
+      enabled: yes
+      state: started

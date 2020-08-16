@@ -1,11 +1,11 @@
 ---
 - import_tasks: packages.yml
   tags:
-    - packages
+      - packages
 
 - import_tasks: sudo.yml
   tags:
-    - sudo
+      - sudo
 
 # - import_tasks: hostnames.yml
 #   tags:
@@ -13,12 +13,12 @@
 
 - import_tasks: ssh.yml
   tags:
-    - ssh
+      - ssh
 
 - import_tasks: user.yml
   tags:
-    - user
+      - user
 
 - import_tasks: ufw.yml
   tags:
-    - ufw
+      - ufw

@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+
+{% for host in hostvars %}
+host {{ hostvars[host]['inventory_hostname_short'] }}
+	Hostname {{ host }}
+	User {{ username }}
+	IdentitiesOnly yes
+	IdentityFile ~/.ssh/id_rsa
+
+{% endfor %}
+host club
+	HostName 45.55.177.165
+	User jlrickert
+	IdentityFile ~/.ssh/id_rsa

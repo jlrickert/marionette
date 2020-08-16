@@ -1,0 +1,4 @@
+---
+host_packages:
+    - intel-microcode
+    - firmware-linux

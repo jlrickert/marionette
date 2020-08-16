@@ -2,8 +2,8 @@
 - name: Install sudo packages
   when: ansible_os_family == "Debian"
   apt:
-    name: sudo
-    state: present
+      name: sudo
+      state: present
 
 - name: Find visudo executable
   become: yes
@@ -14,7 +14,7 @@
 - name: Copy sudoers config
   become: yes
   template:
-    src: sudoers.j2
-    dest: /etc/sudoers
-    mode: "0440"
-    validate: "{{ visudo_exe.stdout }} -cf %s"
+      src: sudoers.j2
+      dest: /etc/sudoers
+      mode: "0440"
+      validate: "{{ visudo_exe.stdout }} -cf %s"

@@ -2,17 +2,17 @@
 - name: Copy sshd configuration
   become: yes
   template:
-    src: sshd_config.j2
-    dest: /etc/ssh/sshd_config
-    owner: root
-    group: root
-    mode: "0644"
-    validate: /usr/sbin/sshd -t -f %s
+      src: sshd_config.j2
+      dest: /etc/ssh/sshd_config
+      owner: root
+      group: root
+      mode: "0644"
+      validate: /usr/sbin/sshd -t -f %s
   notify: restart sshd
 
 - name: Enable and start SSH Daemon
   when: ansible_hostname != "instance"
   service:
-    name: sshd.service
-    enabled: yes
-    state: started
+      name: sshd.service
+      enabled: yes
+      state: started

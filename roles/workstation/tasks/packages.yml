@@ -1,0 +1,10 @@
+---
+- name: Install External debian packages
+  apt:
+      deb: "{{ item }}"
+      state: present
+  with_items:
+      - "https://download.teamviewer.com/download/linux/teamviewer_amd64.deb"
+      - "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+      - "https://go.microsoft.com/fwlink/?LinkID=760868"
+      - "https://discordapp.com/api/download?platform=linux&format=deb"

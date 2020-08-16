@@ -1,0 +1,7 @@
+---
+- name: Create ssh config file
+  become: yes
+  become_user: "{{ workstation_user }}"
+  template:
+      src: ssh_config.j2
+      dest: ~/.ssh/config

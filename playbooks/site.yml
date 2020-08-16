@@ -1,5 +1,70 @@
 ---
-- import_playbook: common.yml
-- import_playbook: dotfiles.yml
-# - import_playbook: openvpn/site.yml
-- import_playbook: workstation.yml
+- hosts: all
+  become: yes
+  tasks:
+      - name: Load common role
+        import_role:
+            name: common
+        tags:
+            - common
+
+      - name: Load Dotfiles Role
+        import_role:
+            name: dotfiles
+        tags:
+            - dotfiles
+
+      - name: Load docker role
+        import_role:
+            name: docker
+        tags:
+            - docker
+
+- hosts: 127.0.0.1
+  connection: local
+  become: yes
+  tasks:
+      - name: Load OpenVPN Authority Role
+        import_role:
+            name: openvpn
+            tasks_from: authority
+        tags:
+            - openvpn
+            - openvpn_authority
+
+- hosts: openvpn_server
+  become: yes
+  tasks:
+      - name: Load OpenVPN Server Role
+        import_role:
+            name: openvpn
+            tasks_from: server.yml
+        tags:
+            - openvpn
+            - openvpn_server
+
+- hosts: openvpn_client
+  become: yes
+  tasks:
+      - name: Load OpenVPN Client Role
+        import_role:
+            name: openvpn
+            tasks_from: client.yml
+        tags:
+            - openvpn
+            - openvpn_client
+
+- hosts: workstation
+  become: yes
+  tasks:
+      - name: Load workstation role
+        import_role:
+            name: workstation
+        tags:
+            - workstation
+
+      - name: Load language role
+        import_role:
+            name: language
+        tags:
+            - language

@@ -1,16 +1,15 @@
 ---
 - name: install java jre
   apt:
-    name: default-jdk
-    state: present
+      name: default-jdk
+      state: present
 
 - name: Install openjdk
   apt:
-    name: default-jdk
-    state: present
+      name: default-jdk
+      state: present
 
 - name: Install maven
   apt:
-    name: maven
-    state: present
-
+      name: maven
+      state: present

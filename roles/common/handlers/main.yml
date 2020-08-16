@@ -3,10 +3,10 @@
 - name: restart sshd
   when: ansible_hostname != "instance"
   service:
-    name: sshd.service
-    state: restarted
+      name: sshd.service
+      state: restarted
 
 - name: restart ufw
   service:
-    name: ufw.service
-    state: restarted
+      name: ufw.service
+      state: restarted

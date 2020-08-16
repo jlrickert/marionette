@@ -3,14 +3,14 @@
   become_user: root
   become_method: su
   tasks:
-    - name: Load Common Role
-      import_role:
-        name: common
+      - name: Load Common Role
+        import_role:
+            name: common
 
-    - name: Load OpenVPN Client Role
-      import_role:
-        name: openvpn
-        tasks_from: client.yml
-      tags:
-        - openvpn
-        - openvpn_client
+      - name: Load OpenVPN Client Role
+        import_role:
+            name: openvpn
+            tasks_from: client.yml
+        tags:
+            - openvpn
+            - openvpn_client

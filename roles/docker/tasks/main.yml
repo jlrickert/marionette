@@ -1,44 +1,53 @@
 ---
 - name: Install required system packages
   apt:
-    name: [
-      'apt-transport-https',
-      'ca-certificates',
-      'curl',
-      'docker-compose',
-      'gnupg-agent',
-      'software-properties-common',
-    ]
-    state: present
+      name:
+          [
+              "apt-transport-https",
+              "ca-certificates",
+              "curl",
+              "gnupg2",
+              "docker-compose",
+              "gnupg-agent",
+              "software-properties-common",
+          ]
+      state: present
 
 - name: Add Docker GPG apt Key
   apt_key:
-    url: https://download.docker.com/linux/debian/gpg
-    id: "8D81803C0EBFCD88"
-    state: present
+      url: https://download.docker.com/linux/debian/gpg
+      id: "8D81803C0EBFCD88"
+      state: present
 
 - name: Add Docker Repository
   apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/debian buster stable
-    state: present
+      repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+      state: present
 
 - name: Update apt and install docker-ce and docker-compose
   apt:
-    name: [ 'docker-ce', 'docker-compose' ]
-    state: present
-    update_cache: yes
+      name: ["docker-ce", "docker-compose"]
+      state: present
+      update_cache: yes
 
 - name: Add users to docker group
   user:
-    name: "{{ item }}"
-    groups:
-      - "docker"
-    append: yes
+      name: "{{ item }}"
+      groups:
+          - "docker"
+      append: yes
   loop: "{{ docker_users }}"
+
+- name: Enable and start Docker Socket
+  when: ansible_hostname != "instance"
+  service:
+      name: docker.service
+      enabled: yes
+      state: started
 
 - name: Enable and start Docker Daemon
   when: ansible_hostname != "instance"
   service:
-    name: docker.service
-    enabled: yes
-    state: started
+      name: docker.service
+      enabled: yes
+      state: started

@@ -1,0 +1,8 @@
+---
+wireless_devices: ["wlp5s0"]
+ethernet_devices: ["enp3s0", "tun0"]
+battery_devices: [0]
+host_packages:
+    - intel-microcode
+    - firmware-linux
+    - firmware-realtek

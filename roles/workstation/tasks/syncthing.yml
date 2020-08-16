@@ -1,30 +1,37 @@
 ---
 - name: Add Syncthing GPG apt Key
   apt_key:
-    url: https://syncthing.net/release-key.txt
-    state: present
+      url: https://syncthing.net/release-key.txt
+      state: present
 
 - name: Add Syncthing Repository
   apt_repository:
-    repo: deb [arch=amd64] http://apt.syncthing.net/ syncthing release
-    state: present
+      repo: deb [arch=amd64] http://apt.syncthing.net/ syncthing release
+      state: present
 
 - name: Update apt and install Syncthing
   apt:
-    name: syncthing
-    state: present
-    update_cache: yes
+      name: syncthing
+      state: present
+      update_cache: yes
 
 - name: "Enable syncthing for user {{ workstation_user }}"
   systemd:
-    name: syncthing@{{ workstation_user }}
-    state: started
-    daemon_reload: yes
-    enabled: yes
+      name: syncthing@{{ workstation_user }}
+      state: started
+      daemon_reload: yes
+      enabled: yes
 
 - name: Enable syncthing through firewall
   ufw:
-    name: syncthing
-    rule: allow
+      name: syncthing
+      rule: allow
   tags:
-    - syncthing
+      - syncthing
+
+- name: Increase the amount of inotify watchers
+  copy:
+      src: 99-max_watches.conf
+      dest: /etc/sysctl.d/99-max_watches.conf
+  notify:
+      - reload sysctl

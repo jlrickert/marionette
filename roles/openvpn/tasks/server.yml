@@ -4,11 +4,11 @@
 
 - name: Copy CA certificate
   copy:
-    src: "{{ openvpn_ca_root }}/pki/ca.crt"
-    dest: "/etc/openvpn/ca.crt"
-    owner: root
-    group: root
-    mode: "0600"
+      src: "{{ openvpn_ca_root }}/pki/ca.crt"
+      dest: "/etc/openvpn/ca.crt"
+      owner: root
+      group: root
+      mode: "0600"
   register: ca_cert_res
   notify: restart openvpn@server
 
@@ -17,64 +17,64 @@
   become_user: "{{ openvpn_ca_user }}"
   delegate_to: "localhost"
   shell:
-    cmd: |
-      ./easyrsa build-server-full {{ openvpn_server }} nopass inline
-    creates: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server }}.key"
-    chdir: "{{ openvpn_ca_root }}"
+      cmd: |
+          ./easyrsa build-server-full {{ openvpn_server_hostname }} nopass inline
+      creates: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server_hostname }}.key"
+      chdir: "{{ openvpn_ca_root }}"
 
 - name: Copy Server key
   become: yes
   copy:
-    src: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server }}.key"
-    dest: "/etc/openvpn/server.key"
-    owner: root
-    group: root
-    mode: "0600"
+      src: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server_hostname }}.key"
+      dest: "/etc/openvpn/server.key"
+      owner: root
+      group: root
+      mode: "0600"
   notify: restart openvpn@server
 
 - name: Copy Signed Server certificate
   become: yes
   copy:
-    src: "{{ openvpn_ca_root }}/pki/issued/{{ openvpn_server }}.crt"
-    dest: "/etc/openvpn/server.crt"
-    owner: root
-    group: root
-    mode: "0600"
+      src: "{{ openvpn_ca_root }}/pki/issued/{{ openvpn_server_hostname }}.crt"
+      dest: "/etc/openvpn/server.crt"
+      owner: root
+      group: root
+      mode: "0600"
   notify: restart openvpn@server
 
 - name: Copy dh.pem
   copy:
-    src: "{{ openvpn_ca_root }}/pki/dh.pem"
-    dest: "/etc/openvpn/dh.pem"
+      src: "{{ openvpn_ca_root }}/pki/dh.pem"
+      dest: "/etc/openvpn/dh.pem"
   notify: restart openvpn@server
 
 - name: Copy ta key from authority
   copy:
-    src: "{{ openvpn_ca_root }}/pki/ta.key"
-    dest: "/etc/openvpn/ta.key"
+      src: "{{ openvpn_ca_root }}/pki/ta.key"
+      dest: "/etc/openvpn/ta.key"
   notify: restart openvpn@server
 
 - name: Deploy server configuration
   template:
-    src: server.conf.j2
-    dest: "/etc/openvpn/server.conf"
+      src: server.conf.j2
+      dest: "/etc/openvpn/server.conf"
   notify: restart openvpn@server
 
 - name: Enable ipv4 forwarding
   sysctl:
-    name: net.ipv4.ip_forward
-    value: "1"
-    sysctl_set: yes
-    state: present
-    reload: yes
+      name: net.ipv4.ip_forward
+      value: "1"
+      sysctl_set: yes
+      state: present
+      reload: yes
 
 - name: Enable ipv6 forwarding
   sysctl:
-    name: net.ipv6.conf.all.forwarding
-    value: "1"
-    sysctl_set: yes
-    state: present
-    reload: yes
+      name: net.ipv6.conf.all.forwarding
+      value: "1"
+      sysctl_set: yes
+      state: present
+      reload: yes
 
 - name: Find openvpn device
   shell: ip route | grep default | awk '{print $5}'
@@ -83,37 +83,37 @@
 
 - name: Allow routed traffic
   ufw:
-    rule: allow
-    route: yes
+      rule: allow
+      route: yes
 
 - name: Insert/Update ufw default forward policy
   lineinfile:
-    path: /etc/default/ufw
-    regexp: "^DEFAULT_FORWARD_POLICY="
-    line: 'DEFAULT_FORWARD_POLICY="ACCEPT"'
+      path: /etc/default/ufw
+      regexp: "^DEFAULT_FORWARD_POLICY="
+      line: 'DEFAULT_FORWARD_POLICY="ACCEPT"'
 
 - name: Insert/Update post routing rules
   blockinfile:
-    path: /etc/ufw/before.rules
-    insertbefore: "# Don't delete these required lines, otherwise there will be errors"
-    block: |
-      # START OPENVPN RULES
-      # NAT table rules
-      *nat
-      :POSTROUTING ACCEPT [0:0]
-      # Allow traffic form OpenVPN client to {{ dev_res.stdout }}
-      -A POSTROUTING -s 10.8.0.0/24 -o {{ dev_res.stdout }} -j MASQUERADE
-      COMMIT
-      # END OPENVPN RULES
+      path: /etc/ufw/before.rules
+      insertbefore: "# Don't delete these required lines, otherwise there will be errors"
+      block: |
+          # START OPENVPN RULES
+          # NAT table rules
+          *nat
+          :POSTROUTING ACCEPT [0:0]
+          # Allow traffic form OpenVPN client to {{ dev_res.stdout }}
+          -A POSTROUTING -s 10.8.0.0/24 -o {{ dev_res.stdout }} -j MASQUERADE
+          COMMIT
+          # END OPENVPN RULES
 
 - name: Allow openvpn traffic
   ufw:
-    rule: allow
-    proto: udp
-    port: "1194"
+      rule: allow
+      proto: udp
+      port: "1194"
 
 - name: Enable and start openvpn server
   service:
-    name: openvpn@server
-    enabled: yes
-    state: started
+      name: openvpn@server
+      enabled: yes
+      state: started

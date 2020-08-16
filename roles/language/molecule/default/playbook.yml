@@ -2,8 +2,9 @@
 - name: Converge
   hosts: all
   roles:
-  - { role: language,
-      nodejs_install: yes,
-      scala_install: yes,
-      java_install: yes
-    }
+      - {
+            role: language,
+            nodejs_install: yes,
+            scala_install: yes,
+            java_install: yes,
+        }

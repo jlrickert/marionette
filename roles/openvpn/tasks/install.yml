@@ -1,5 +1,5 @@
 ---
 - name: Install packages for Openvpn
   apt:
-    name: ["openvpn"]
-    state: present
+      name: ["openvpn"]
+      state: present

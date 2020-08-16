@@ -2,58 +2,69 @@
 - name: Install i3 packages (Debian)
   when: ansible_os_family == "Debian"
   apt:
-    name: [
-      "arandr",
-      "gdm3",
-      "i3",
-      "rxvt-unicode",
-      "xclip",
-      "xsel",
-    ]
-    state: present
+      name:
+          [
+              "alsa-utils",
+              "arandr",
+              "dunst",
+              "firefox-esr",
+              "gdm3",
+              "gnome-keyring",
+              "gnome-terminal",
+              "i3",
+              "network-manager-gnome",
+              "numlockx",
+              "rxvt-unicode",
+              "xbacklight",
+              "xclip",
+              "xsel",
+          ]
+      state: present
 
 - name: Create i3 config directories
   become: yes
   become_user: "{{ workstation_user }}"
   file:
-    path: "{{ config_dir }}/{{ item }}"
-    state: directory
+      path: "{{ config_dir }}/{{ item }}"
+      state: directory
   loop:
-    - i3
-    - i3status
+      - i3
+      - i3status
 
 - name: Install i3exit script
-  become: yes
-  become_user: "{{ workstation_user }}"
   copy:
-    src: i3exit
-    dest: "~/.local/bin/i3exit"
-    mode: +x
-    
+      src: i3exit
+      dest: "/usr/local/bin/i3exit"
+      mode: +x
+
 - name: Install morc_menu
-  become: yes
-  become_user: "{{ workstation_user }}"
   copy:
-    src: morc_menu
-    dest: "~/.local/bin/morc_menu"
-    mode: +x
+      src: morc_menu
+      dest: "/usr/local/bin/morc_menu"
+      mode: +x
 
 - name: Install i3 config
   become: yes
   become_user: "{{ workstation_user }}"
   template:
-    src: "i3_config.j2"
-    dest: "{{ config_dir }}/i3/config"
+      src: "i3_config.j2"
+      dest: "{{ config_dir }}/i3/config"
 
 - name: Install i3 status config
   become: yes
   become_user: "{{ workstation_user }}"
   template:
-    src: "i3status_config.j2"
-    dest: "{{ config_dir }}/i3status/config"
+      src: "i3status_config.j2"
+      dest: "{{ config_dir }}/i3status/config"
 
 - name: Enable and start gdm3
   systemd:
-    name: gdm3.service
-    state: started
-    enabled: yes
+      name: gdm3.service
+      state: started
+      enabled: yes
+
+- name: Enable and start network manager
+  systemd:
+      name: network-manager.service
+      state: started
+      enabled: yes

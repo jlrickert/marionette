@@ -2,8 +2,8 @@
 - name: Install sudo packages
   when: ansible_os_family == "Debian"
   apt:
-    name: zsh
-    state: present
+      name: zsh
+      state: present
 
 - name: Get zsh shell location
   command: which zsh
@@ -11,28 +11,28 @@
   failed_when: zsh_path_res.rc != 0
   register: zsh_path_res
 
-- name: "Create user {{ common_username }}"
+- name: "Create user {{ username }}"
   user:
-    name: "{{ common_username }}"
-    state: present
-    comment: "{{ common_realname }}"
-    groups:
-      - "sudo"
-    shell: "{{ zsh_path_res.stdout }}"
-    create_home: yes
-    append: yes
+      name: "{{ username }}"
+      state: present
+      comment: "{{ realname }}"
+      groups:
+          - "sudo"
+      shell: "{{ zsh_path_res.stdout }}"
+      create_home: yes
+      append: yes
 
 - name: Make SSH directory for user
   file:
-    path: "/home/{{ common_username }}/.ssh"
-    state: directory
-    mode: "0700"
-    owner: "{{ common_username }}"
-    group: "{{ common_username }}"
+      path: "/home/{{ username }}/.ssh"
+      state: directory
+      mode: "0700"
+      owner: "{{ username }}"
+      group: "{{ username }}"
 
-- name: "Set authorization keys for {{ common_username }}"
+- name: "Set authorization keys for {{ username }}"
   authorized_key:
-    user: "{{ common_username }}"
-    state: present
-    key: "{{ item }}"
-  loop: "{{ common_ssh_keys }}"
+      user: "{{ username }}"
+      state: present
+      key: "{{ item }}"
+  loop: "{{ ssh_keys }}"

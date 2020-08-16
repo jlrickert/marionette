@@ -1,29 +1,25 @@
 ---
 - name: Ensure apt-transport-https is installed.
   apt:
-    name: apt-transport-https
-    state: present
+      name: apt-transport-https
+      state: present
 
 - name: Import nodejs language role
   import_tasks: nodejs.yml
   tags:
-    - nodejs
+      - nodejs
 
 - name: Import java language role
   import_tasks: java.yml
   tags:
-    - java
+      - java
 
-# - import_tasks: scala.yml
+# - name: Import python language role
+#   import_tasks: python.yml
 #   tags:
-#     - scala
-
-- name: Import python language role
-  import_tasks: python.yml
-  tags:
-    - python
+#     - python
 
 - name: Import golang language role
   import_tasks: golang.yml
   tags:
-    - golang
+      - golang

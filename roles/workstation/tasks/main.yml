@@ -1,28 +1,20 @@
 ---
 - import_tasks: i3.yml
   tags:
-    i3
+      - i3
 
 - import_tasks: syncthing.yml
   tags:
-    syncthing
+      - syncthing
 
-- name: Install External debian packages
-  apt:
-    deb: "{{ item }}"
-    state: present
-  with_items:
-    - "https://download.teamviewer.com/download/linux/teamviewer_amd64.deb"
-    - "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
-    - "https://go.microsoft.com/fwlink/?LinkID=760868"
-    - "https://discordapp.com/api/download?platform=linux&format=deb"
+- import_tasks: packages.yml
+  tags:
+      - packages
 
-# - name: Copy ssh private keys (workstation only)
-#   become: yes
-#   become_user: "{{ workstation_user }}"
-#   copy:
-#     src: "{{ item }}"
-#     dest: "{{ item }}"
-#   loop:
-#     - "~/.ssh/id_rsa"
-#     - "~/.ssh/id_rsa.pub"
+- import_tasks: ufw.yml
+  tags:
+      - ufw
+
+- import_tasks: ssh_config.yml
+  tags:
+      - ssh_config
