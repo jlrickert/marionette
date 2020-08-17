@@ -1,7 +1,5 @@
 ---
 - name: Ensure localhost is set in /etc/hosts
-  become: yes
-  become_user: root
   vars:
       ipv4_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
   lineinfile:
@@ -11,8 +9,6 @@
       state: present
 
 - name: Ensure local FQDN is set in /etc/hosts
-  become: yes
-  become_user: root
   lineinfile:
       path: /etc/hosts
       regexp: '^127\.0\.1\.1'
@@ -20,8 +16,6 @@
       state: present
 
 - name: "Build hosts file"
-  become: yes
-  become_user: root
   lineinfile:
       dest: /etc/hosts
       regexp: ".*{{ item }}$"

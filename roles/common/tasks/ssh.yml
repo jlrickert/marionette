@@ -1,6 +1,5 @@
 ---
 - name: Copy sshd configuration
-  become: yes
   template:
       src: sshd_config.j2
       dest: /etc/ssh/sshd_config
@@ -11,7 +10,6 @@
   notify: restart sshd
 
 - name: Enable and start SSH Daemon
-  become: yes
   when: ansible_hostname != "instance"
   service:
       name: sshd.service

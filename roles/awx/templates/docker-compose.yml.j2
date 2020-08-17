@@ -180,15 +180,13 @@ services:
     {% endif %}
   {% endif %}
 
-{% if docker_compose_subnet is defined %}
 networks:
   default:
     driver: bridge
     ipam:
       driver: default
       config:
-      - subnet:  {{ docker_compose_subnet }}
-{% endif %}
+      - subnet: 172.16.57.0/24
 
 volumes:
   supervisor-socket:

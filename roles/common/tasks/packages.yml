@@ -1,6 +1,6 @@
 ---
 - name: Enable non free software
-  become: yes
+  when: ansible_os_family == "Debian"
   template:
       src: sources.list.j2
       dest: /etc/apt/sources.list
@@ -8,13 +8,11 @@
       group: root
       mode: "0644"
   register: source_list
-  when: ansible_os_family == "Debian"
 
 - name: Update repository
-  become: yes
+  when: source_list.changed
   apt:
       update_cache: yes
-  when: source_list.changed
 
 - name: Install packages (Debian)
   when: ansible_os_family == "Debian"
@@ -45,13 +43,13 @@
       state: present
 
 - name: Install additional group packages
-  become: yes
+  when: ansible_os_family == "Debian"
   apt:
       name: "{{ group_packages }}"
       state: present
 
 - name: Install additional host packages
-  become: yes
+  when: ansible_os_family == "Debian"
   apt:
       name: "{{ host_packages }}"
       state: present

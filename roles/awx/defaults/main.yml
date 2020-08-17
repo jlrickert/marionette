@@ -7,8 +7,6 @@ postgresql_image: "postgres:{{postgresql_version}}"
 
 compose_start_containers: true
 
-dockerhub_base: ansible
-
 # Common Docker parameters
 awx_task_hostname: awx
 awx_web_hostname: awxweb

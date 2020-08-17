@@ -23,7 +23,6 @@
       chdir: "{{ openvpn_ca_root }}"
 
 - name: Copy Server key
-  become: yes
   copy:
       src: "{{ openvpn_ca_root }}/pki/private/{{ openvpn_server_hostname }}.key"
       dest: "/etc/openvpn/server.key"
@@ -33,7 +32,6 @@
   notify: restart openvpn@server
 
 - name: Copy Signed Server certificate
-  become: yes
   copy:
       src: "{{ openvpn_ca_root }}/pki/issued/{{ openvpn_server_hostname }}.crt"
       dest: "/etc/openvpn/server.crt"

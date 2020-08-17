@@ -5,7 +5,6 @@
       state: present
 
 - name: Enable ufw
-  become: yes
   ufw:
       state: enabled
 
@@ -20,14 +19,12 @@
 #     direction: outgoing
 
 - name: Enable OpenSSH through firewall
-  become: yes
   ufw:
       rule: limit
       port: ssh
       proto: tcp
 
 - name: Enable and start UFW
-  become: yes
   service:
       name: ufw.service
       enabled: yes

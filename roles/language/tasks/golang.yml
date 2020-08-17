@@ -1,6 +1,5 @@
 ---
 - name: Download Go tarball
-  become: yes
   get_url:
       url: "https://golang.org/dl/{{ go_tarball }}"
       dest: /usr/local/src/{{ go_tarball}}
@@ -14,20 +13,17 @@
   register: go_version
 
 - name: Remove old installation of go
-  become: yes
   file:
       path: /usr/local/share/go
       state: absent
   when: go_version.stdout != go_version_check
 
 - name: Create go root directory
-  become: yes
   file:
       path: /usr/local/share/go
       state: directory
 
 - name: Extract Go tarball
-  become: yes
   unarchive:
       src: "/usr/local/src/{{ go_tarball }}"
       dest: /usr/local/share
@@ -40,13 +36,11 @@
       dest: /etc/profile.d/golang.sh
 
 - name: Create /usr/local/bin directory
-  become: yes
   file:
       path: /usr/local/bin
       state: directory
 
 - name: Link go binary to /usr/local/bin/go
-  become: yes
   file:
       src: /usr/local/share/go/bin/go
       dest: /usr/local/bin/go
