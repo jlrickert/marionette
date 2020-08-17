@@ -1,0 +1,34 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  become: yes
+  tasks:
+      - name: Load OpenVPN Authority Role
+        import_role:
+            name: openvpn
+            tasks_from: authority
+        tags:
+            - openvpn
+            - openvpn_authority
+
+- hosts: openvpn_server
+  become: yes
+  tasks:
+      - name: Load OpenVPN Server Role
+        import_role:
+            name: openvpn
+            tasks_from: server.yml
+        tags:
+            - openvpn
+            - openvpn_server
+
+- hosts: openvpn_client
+  become: yes
+  tasks:
+      - name: Load OpenVPN Client Role
+        import_role:
+            name: openvpn
+            tasks_from: client.yml
+        tags:
+            - openvpn
+            - openvpn_client

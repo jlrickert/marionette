@@ -2,123 +2,17 @@
 - name: bootstrap awx
   hosts: awx
   tasks:
-      - name: Load Common Role
-        import_role:
-            name: common
-        tags:
-            - common
-
       - name: Load Docker Role
+        become: yes
         import_role:
             name: docker
         tags:
             - docker
 
-      - name: Generate broadcast websocket secret
-        set_fact:
-            broadcast_websocket_secret: "{{ lookup('password', '/dev/null', length=128) }}"
-        run_once: true
-        no_log: true
-
-      - name: Upgrade PostgreSQL
-        block:
-            - name: Check for existing Postgres data
-              stat:
-                  path: "~/.awx/pgdocker/pgdata/PG_VERSION"
-              register: pg_version_file
-
-            - name: Record Postgres version
-              set_fact:
-                  old_pg_version: "{{ lookup('file', '~/.awx/pgdocker/pgdata/PG_VERSION') }}"
-              when: pg_version_file.stat.exists
-
-            - name: Determine whether to upgrade postgres
-              set_fact:
-                  upgrade_postgres: "{{ old_pg_version is defined and old_pg_version == '9.6' }}"
-
-            - name: Set up new postgres paths pre-upgrade
-              file:
-                  state: directory
-                  path: "{{ item }}"
-                  recurse: true
-              when: upgrade_postgres | bool
-              with_items:
-                  - "~/.awx/pgdocker/pgdata/10/data"
-
-            - name: Stop AWX before upgrading postgres
-              docker_service:
-                  project_src: "~/.awx/awxcompose"
-                  stopped: true
-              when: upgrade_postgres | bool
-
-            - name: Upgrade Postgres
-              shell: |
-                  docker run --rm \
-                    -v ~/.awx/pgdocker/pgdata:/var/lib/postgresql/9.6/data \
-                    -v ~/.awx/pgdocker/10/data:/var/lib/postgresql/10/data \
-                    -e PGUSER=awx -e POSTGRES_INITDB_ARGS="-U awx" \
-                    tianon/postgres-upgrade:9.6-to-10 --username=awx
-              when: upgrade_postgres | bool
-
-            - name: Copy old pg_hba.conf
-              copy:
-                  src: "~/.awx/pgdocker/pgdata/pg_hba.conf"
-                  dest: "~/.awx/pgdocker/10/data/"
-              when: upgrade_postgres | bool
-
-            - name: Remove old data directory
-              file:
-                  path: "~/.awx/pgdocker/pgdata"
-                  state: absent
-
-      - name: Set DockerHub Image Paths
-        set_fact:
-            awx_docker_actual_image: "ansible/awx:latest"
-
-      - name: Create ~/.awx/awxcompose directory
-        file:
-            path: "~/.awx/awxcompose"
-            state: directory
-
-      - name: Create Redis socket directory
-        file:
-            path: "~/.awx/awxcompose/redis_socket"
-            state: directory
-            mode: 0777
-
-      # files at https://github.com/ansible/awx/tree/devel/installer/roles/local_docker/templates
-      - name: Create Docker Compose Configuration
-        template:
-            src: "{{ item }}.j2"
-            dest: "~/.awx/awxcompose/{{ item }}"
-            mode: 0600
-        register: awx_compose_config
-
-      - name: set redis config to other group readable to satisfy redis-server
-        file:
-            path: "~/.awx/awxcompose/redis.conf"
-            mode: 0666
-
-      - name: Render SECRET_KEY file
-        copy:
-            content: "awxsecret"
-            dest: "~/.awx/awxcompose/SECRET_KEY"
-            mode: 0600
-        register: awx_secret_key
-
-      - name: Start coontainers
-        block:
-            - name: Start the containers
-              docker_compose:
-                  project_source: "~/.awx/awxcompose"
-                  restarted: "{{ awx_compose_config is changed or awx_secret_key is changed }}"
-              register: awx_compose_start
-
-            - name: Update CA trust in awx_web container
-              command: docker exec awx_web '/usr/bin/update-ca-trust'
-              when: ax_compose_config.changed or awx_compose_start.changed
-
-            - name: Update CA trust in awx_task container
-              command: docker exec awx_task '/usr/bin/update-ca-trust'
-              when: ax_compose_config.changed or awx_compose_start.changed
-        when: compose_start_containers | bool
+      - name: Load awx Role
+        become: yes
+        become_user: "{{ username }}"
+        import_role:
+            name: awx
+        tags:
+            - awx

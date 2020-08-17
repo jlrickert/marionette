@@ -1,5 +1,6 @@
 ---
 - name: Enable non free software
+  become: yes
   template:
       src: sources.list.j2
       dest: /etc/apt/sources.list
@@ -10,6 +11,7 @@
   when: ansible_os_family == "Debian"
 
 - name: Update repository
+  become: yes
   apt:
       update_cache: yes
   when: source_list.changed
@@ -26,6 +28,7 @@
               "curl",
               "dnsutils",
               "fasd",
+              "fonts-noto-color-emoji",
               "git",
               "htop",
               "httpie",
@@ -42,11 +45,13 @@
       state: present
 
 - name: Install additional group packages
+  become: yes
   apt:
       name: "{{ group_packages }}"
       state: present
 
 - name: Install additional host packages
+  become: yes
   apt:
       name: "{{ host_packages }}"
       state: present

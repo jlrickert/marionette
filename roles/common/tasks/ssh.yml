@@ -11,6 +11,7 @@
   notify: restart sshd
 
 - name: Enable and start SSH Daemon
+  become: yes
   when: ansible_hostname != "instance"
   service:
       name: sshd.service
