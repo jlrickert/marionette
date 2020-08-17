@@ -10,6 +10,8 @@
             - common
 
       - name: Load Dotfiles Role
+        become: yes
+        become_user: "{{ username }}"
         import_role:
             name: dotfiles
         tags:
