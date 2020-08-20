@@ -1,4 +1,10 @@
 ---
+- name: Install i3 packages (Debian)
+  when: ansible_os_family == "Debian"
+  apt:
+      name: ["sshpass"]
+      state: present
+
 - name: Install External debian packages
   apt:
       deb: "{{ item }}"
