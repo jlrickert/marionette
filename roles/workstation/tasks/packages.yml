@@ -2,7 +2,18 @@
 - name: Install i3 packages (Debian)
   when: ansible_os_family == "Debian"
   apt:
-      name: ["sshpass"]
+      name:
+          [
+              "sshpass",
+              "python3",
+
+              # alacritty dependencies
+              "cmake",
+              "pkg-config",
+              "libfreetype6-dev",
+              "libfontconfig1-dev",
+              "libxcb-xfixes0-dev",
+          ]
       state: present
 
 - name: Install External debian packages
