@@ -54,6 +54,7 @@
   register: dh_res
 
 - name: Find openvpn executable
+  become: yes
   command: which openvpn
   changed_when: False
   register: openvpn_exe_res

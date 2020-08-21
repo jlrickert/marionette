@@ -110,6 +110,25 @@
       proto: udp
       port: "1194"
 
+- name: Install openvpn ccd directory
+  file:
+      path: "/etc/openvpn/ccd"
+      state: directory
+
+- name: Ensure client config files exist
+  file:
+      path: "/etc/openvpn/ccd/{{ item.name }}2"
+      state: touch
+      mode: "644"
+  with_items: "{{ openvpn_client_config }}"
+
+- name: Set static ip for clients
+  lineinfile:
+      path: "/etc/openvpn/ccd/{{ item.name }}2"
+      regexp: "^ifconfig-push"
+      line: "ifconfig-push {{ item.local_addr }} {{ item.remote_netmask }}"
+  with_items: "{{ openvpn_client_config }}"
+
 - name: Enable and start openvpn server
   service:
       name: openvpn@server

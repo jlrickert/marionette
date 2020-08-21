@@ -18,3 +18,4 @@ openvpn_ca_user: "{{ username }}"
 openvpn_ca_group: "{{ username }}"
 
 restart_openvpn: yes
+openvpn_static_ip_config: []

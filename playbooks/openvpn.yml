@@ -24,7 +24,6 @@
   become: yes
   become_user: root
   tasks:
-  tasks:
       - name: Load OpenVPN Client Role
         import_role:
             name: openvpn
