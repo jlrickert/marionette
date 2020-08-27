@@ -53,3 +53,28 @@
   apt:
       name: "{{ host_packages }}"
       state: present
+
+- name: Install alacritty terminal info
+  become: yes
+  block:
+      - name: Check for alacritty terminal info
+        command: infocmp alacritty
+        changed_when: false
+        failed_when: false
+        register: alacritty_present
+
+      - name: Copy over alacritty terminal info
+        when: alacritty_present.rc != 0
+        copy:
+            src: alacritty.info
+            dest: ~/alacritty.info
+
+      - name: Install alacritty terminal info
+        command: tic -xe alacritty,alacritty-direct ~/alacritty.info
+        when: alacritty_present.rc != 0
+
+      - name: Remove alacrity terminal info install file
+        file:
+            path: ~/alacritty.info
+            state: absent
+        when: alacritty_present.rc != 0
